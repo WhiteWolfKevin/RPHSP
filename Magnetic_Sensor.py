@@ -5,6 +5,9 @@ import signal
 import os
 import pygame
 
+# Global Variables
+alarmSoundLocation = "/home/pi/RaspberryPiHomeSecurityProject/RPHSP/alarm.mp3"
+
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
 
@@ -49,7 +52,7 @@ while True:
         if (sensor.currentState):
             securityCompromised = True
             if (not pygame.mixer.music.get_busy()):
-                pygame.mixer.music.load("/home/pi/Downloads/alarm.mp3")
+                pygame.mixer.music.load(alarmSoundLocation)
                 pygame.mixer.music.play(-1)
             if (sensor.currentState != sensor.previousState):
                 sensor.status = "Open"
