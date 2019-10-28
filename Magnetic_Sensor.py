@@ -3,7 +3,7 @@ import time
 import sys
 import signal
 import os
-from pygame import mixer
+import pygame
 
 # Global Variables
 alarmSoundLocation = "/home/pi/RaspberryPiHomeSecurityProject/RPHSP/alarm.mp3"
@@ -43,23 +43,22 @@ pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
 # Main Function
-while True:
+# Ask if the user wants to arm the system
+if(alarmSystemArmed):
+    userResponse = raw_input("Would you like to disarm the system? (y/n): ")
+    if(userResponse == "y"):
+        alarmSystemArmed = False
+        print("System is now disarmed")
+
+elif(not alarmSystemArmed):
+    userResponse = raw_input("Would you like to arm the system? (y/n): ")
+    if(userResponse == "y"):
+        alarmSystemArmed = True
+        print("System is now armed")
+
+while alarmSystemArmed:
     # Clear the display
     os.system('clear')
-
-    # Ask if the user wants to arm the system
-    if(alarmSystemArmed):
-        userResponse = raw_input("Would you like to disarm the system? (y/n): ")
-        if(userResponse == "y"):
-            alarmSystemArmed = False
-            print("System is now disarmed")
-
-    elif(not alarmSystemArmed):
-        userResponse = raw_input("Would you like to arm the system? (y/n): ")
-        if(userResponse == "y"):
-            alarmSystemArmed = True
-            print("System is now armed")
-
 
     # Loop through each sensor and update its states
     for sensor in sensors:
