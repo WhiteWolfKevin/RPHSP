@@ -43,6 +43,7 @@ pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
 # Main Function
+os.system('clear')
 
 while not alarmSystemArmed:
     # Ask if the user wants to arm the system
