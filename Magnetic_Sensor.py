@@ -36,6 +36,7 @@ for sensor in sensors:
 
 # Variables
 securityCompromised = False
+alarmSystemArmed = False
 
 # Audio player settings
 pygame.mixer.init()
@@ -46,6 +47,16 @@ while True:
     # Clear the display
     os.system('clear')
 
+    # Ask if the user wants to arm the system
+    if(alarmSystemArmed):
+        userResponse = raw_input("Would you like to disarm the system? (y/n): ")
+        if(userResponse == "y"):
+            print("System is now disarmed")
+    elif(not alarmSystemArmed):
+        userResponse = raw_input("Would you like to sarm the system? (y/n): ")
+        if(userResponse == "y"):
+            print("System is now armed")
+            
     # Loop through each sensor and update its states
     for sensor in sensors:
         sensor.currentState = GPIO.input(sensor.pin)
