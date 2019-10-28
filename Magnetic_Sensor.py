@@ -43,18 +43,14 @@ pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
 # Main Function
-# Ask if the user wants to arm the system
-if(alarmSystemArmed):
-    userResponse = raw_input("Would you like to disarm the system? (y/n): ")
-    if(userResponse == "y"):
-        alarmSystemArmed = False
-        print("System is now disarmed")
 
-elif(not alarmSystemArmed):
+while not alarmSystemArmed:
+    # Ask if the user wants to arm the system
     userResponse = raw_input("Would you like to arm the system? (y/n): ")
     if(userResponse == "y"):
         alarmSystemArmed = True
         print("System is now armed")
+        time.sleep(2)
 
 while alarmSystemArmed:
     # Clear the display
