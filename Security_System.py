@@ -87,10 +87,10 @@ def controlPanel():
 # Main Function
 os.system('clear')
 
-securitySystemRunning = threading.Thread(target=securitySystem)
+securitySystemRunning = threading.Thread(target=securitySystem, args=(1,))
 securitySystemRunning.daemon = True
 securitySystemRunning.start()
 
-userInputRunning = threading.Thread(target=controlPanel)
+userInputRunning = threading.Thread(target=controlPanel, args=(2,))
 userInputRunning.daemon = True
 userInputRunning.start()
