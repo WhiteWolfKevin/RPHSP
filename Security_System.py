@@ -43,9 +43,6 @@ pygame.mixer.music.set_volume(1.0)
 def securitySystem():
     securityCompromised = False
     while True:
-        # Clear the display
-        os.system('clear')
-
         # Loop through each sensor and update its states
         for sensor in sensors:
             sensor.currentState = GPIO.input(sensor.pin)
