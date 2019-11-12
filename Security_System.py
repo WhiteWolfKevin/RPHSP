@@ -35,16 +35,13 @@ sensors.append(doorSensor("Basement Door", 21))
 for sensor in sensors:
     GPIO.setup(sensor.pin, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
-# Variables
-securityCompromised = False
-alarmSystemArmed = False
-
 # Audio player settings
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
 # Create Threads
 def securitySystem():
+    securityCompromised = False
     while True:
         # Clear the display
         os.system('clear')
