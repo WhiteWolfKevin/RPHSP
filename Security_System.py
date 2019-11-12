@@ -94,3 +94,7 @@ securitySystemRunning.start()
 userInputRunning = threading.Thread(target=controlPanel, args=(2,))
 userInputRunning.daemon = True
 userInputRunning.start()
+
+while True:
+    print "Program is running"
+    time.sleep(2)
