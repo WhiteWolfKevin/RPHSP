@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 import RPi.GPIO as GPIO
+import os
 from pirc522 import RFID
 
 reader = RFID()
 
+os.system('clear')
 print("Starting Program")
 
 while True:
