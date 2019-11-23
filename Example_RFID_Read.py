@@ -42,4 +42,8 @@ while run:
         print("\nDeauthorizing")
         util.deauth()
 
-        time.sleep(1)
+        #Print everything from card
+        util.dump()
+
+        print "Sleeping"
+        time.sleep(5)
