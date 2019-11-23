@@ -22,6 +22,8 @@ signal.signal(signal.SIGINT, end_read)
 
 print("Starting")
 while run:
+
+    print("Waiting for card")
     rdr.wait_for_tag()
 
     (error, data) = rdr.request()
@@ -43,7 +45,8 @@ while run:
         util.deauth()
 
         #Print everything from card
+        print ("Dumping")
         util.dump()
 
         print "Sleeping"
-        time.sleep(5)
+        time.sleep(1)
