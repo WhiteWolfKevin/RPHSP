@@ -33,6 +33,7 @@ while run:
     (error, uid) = rdr.anticoll()
     if not error:
 
+        """
         print("Card read UID: "+str(uid[0])+","+str(uid[1])+","+str(uid[2])+","+str(uid[3]))
 
         print("Setting tag")
@@ -43,7 +44,8 @@ while run:
 
         print("\nReading")
         util.read_out(4)
-
+        """
+        
         #Print everything from card
         print ("Dumping")
         util.dump()
