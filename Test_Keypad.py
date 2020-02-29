@@ -9,8 +9,8 @@ KEYPAD = [
     ["*", 0, "#"]
 ]
 
-ROW_PINS = [14, 15, 18, 13] # BCM numbering
-COL_PINS = [17, 27, 22] # BCM numbering
+ROW_PINS = [15, 22, 27, 13] # BCM numbering
+COL_PINS = [18, 14, 17] # BCM numbering
 
 def print_key(key):
     print(key)
