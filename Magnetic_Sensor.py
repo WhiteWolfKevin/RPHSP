@@ -6,7 +6,7 @@ import os
 import pygame
 
 # Global Variables
-alarmSoundLocation = "/home/pi/RaspberryPiHomeSecurityProject/RPHSP/alarm.mp3"
+alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"
 
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
@@ -26,7 +26,7 @@ class doorSensor:
 #Create array of sensors
 sensors = []
 sensors.append(doorSensor("Front Door", 16))
-sensors.append(doorSensor("Back Door", 18))
+sensors.append(doorSensor("Back Door", 26))
 sensors.append(doorSensor("Garage Door", 20))
 sensors.append(doorSensor("Basement Door", 21))
 
