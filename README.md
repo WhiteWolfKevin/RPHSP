@@ -6,9 +6,8 @@ Requirements
 
 
 
-====================
 Keypad Configuration
-====================
+
 GPIO Pin Numbers
 14,15,18,17,27,22,13
 
