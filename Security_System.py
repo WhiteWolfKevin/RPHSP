@@ -27,7 +27,7 @@ class doorSensor:
 #Create array of sensors
 sensors = []
 sensors.append(doorSensor("Front Door", 16))
-sensors.append(doorSensor("Back Door", 18))
+sensors.append(doorSensor("Back Door", 26))
 sensors.append(doorSensor("Garage Door", 20))
 sensors.append(doorSensor("Basement Door", 21))
 
