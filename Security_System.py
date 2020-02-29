@@ -7,7 +7,7 @@ import os
 import pygame
 
 # Global Variables
-alarmSoundLocation = "/home/pi/RaspberryPiHomeSecurityProject/RPHSP/alarm.mp3"
+alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"
 
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
