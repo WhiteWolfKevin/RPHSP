@@ -63,6 +63,7 @@ pygame.mixer.music.set_volume(1.0)
 os.system('clear')
 
 # Loop through each sensor and update its states
+i=1
 for sensor in sensors:
     sensor.currentState = GPIO.input(sensor.pin)
     if (sensor.currentState):
@@ -78,14 +79,12 @@ for sensor in sensors:
         sensor.previousState = sensor.currentState
 
     sensor.display_output()
+    # Display on LCD Screen
+    mylcd.lcd_display_string(sensor.display_output(), i)
+
+i=1
 
 
-
-# Display on LCD Screen
-mylcd.lcd_display_string("Test 1", 1)
-mylcd.lcd_display_string("Test 2", 2)
-mylcd.lcd_display_string("Test 3", 3)
-mylcd.lcd_display_string("Test 4", 4)
 
 
 
