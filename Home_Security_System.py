@@ -77,7 +77,7 @@ try:
                 sensor.previousState = sensor.currentState
 
             sensor.display_output()
-            mylcd.lcd_display_string("Hello World", 1)
+            mylcd.lcd_display_string(sensor.get_string(), 1)
 
         # If there has been a compromise, display the compromised locations
         if (securityCompromised):
@@ -92,8 +92,7 @@ try:
                 pygame.mixer.music.stop()
 
         # Time delay
-        time.sleep(0.5)
-        os.system('clear')
+        time.sleep(2)
 
 except KeyboardInterrupt:
     print("Goodbye")
