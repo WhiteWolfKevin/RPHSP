@@ -79,9 +79,8 @@ for sensor in sensors:
         sensor.previousState = sensor.currentState
 
     sensor.display_output()
-    sensorStatus = sensor.display_output()
     # Display on LCD Screen
-    mylcd.lcd_display_string(sensorStatus, i)
+    mylcd.lcd_display_string(print(sensor.display_output()), i)
 
 i=1
 
