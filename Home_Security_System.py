@@ -61,8 +61,13 @@ pygame.mixer.music.set_volume(1.0)
 os.system('clear')
 
 try:
+
+    mylcd.lcd_display_string("Ras Pi Home Security", 1)
+    mylcd.lcd_display_string("====================", 2)
+    mylcd.lcd_display_string("Status: Armed", 3)
+    mylcd.lcd_display_string("====================", 4)
+
     while True:
-        i=1
         for sensor in sensors:
             sensor.currentState = GPIO.input(sensor.pin)
             if (sensor.currentState):
@@ -78,9 +83,7 @@ try:
                 sensor.previousState = sensor.currentState
 
             sensor.display_output()
-            print("i=" + i)
-            mylcd.lcd_display_string(sensor.get_string(), i)
-            ++i
+
 
         # If there has been a compromise, display the compromised locations
         if (securityCompromised):
