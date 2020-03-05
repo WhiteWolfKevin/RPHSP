@@ -62,7 +62,7 @@ pygame.mixer.music.set_volume(1.0)
 os.system('clear')
 
 try:
-    while true:
+    while True:
         for sensor in sensors:
             sensor.currentState = GPIO.input(sensor.pin)
             if (sensor.currentState):
