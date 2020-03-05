@@ -82,10 +82,11 @@ for sensor in sensors:
 
 
 # Display on LCD Screen
-mylcd.lcd_display_string("sensors[1].display_output()", 1)
-mylcd.lcd_display_string(sensors[2].display_output(), 2)
-mylcd.lcd_display_string(sensors[3].display_output(), 3)
-mylcd.lcd_display_string(sensors[4].display_output(), 4)
+mylcd.lcd_display_string("Test 1", 1)
+mylcd.lcd_display_string("Test 2", 2)
+mylcd.lcd_display_string("Test 3", 3)
+mylcd.lcd_display_string("Test 4", 4)
+
 
 
 # If there has been a compromise, display the compromised locations
