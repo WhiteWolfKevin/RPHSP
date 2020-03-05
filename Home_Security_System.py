@@ -34,7 +34,7 @@ class doorSensor:
         print(self.name + " Status: " + self.status)
 
     def get_string(self):
-        doorSensorString = self.name " Status: " + self.status
+        doorSensorString = self.name + " Status: " + self.status
         print(doorSensorString)
         return doorSensorString
 
