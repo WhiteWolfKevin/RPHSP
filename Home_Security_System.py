@@ -76,23 +76,23 @@ try:
             elif (sensor.currentState != sensor.previousState):
                 sensor.status = "Closed"
                 sensor.previousState = sensor.currentState
-
+                
             sensor.display_output()
 
-            # If there has been a compromise, display the compromised locations
-            if (securityCompromised):
-                print("")
-                print("")
-                for sensor in sensors:
-                    if (sensor.currentState):
-                        print("WARNING: " + sensor.name + " is currently open!")
-                securityCompromised = False
-            else:
-                if (pygame.mixer.music.get_busy()):
-                    pygame.mixer.music.stop()
+        # If there has been a compromise, display the compromised locations
+        if (securityCompromised):
+            print("")
+            print("")
+            for sensor in sensors:
+                if (sensor.currentState):
+                    print("WARNING: " + sensor.name + " is currently open!")
+            securityCompromised = False
+        else:
+            if (pygame.mixer.music.get_busy()):
+                pygame.mixer.music.stop()
 
-            # Time delay
-            time.sleep(0.5)
+        # Time delay
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
     print("Goodbye")
