@@ -64,7 +64,7 @@ try:
 
     mylcd.lcd_display_string("Ras Pi Home Security", 1)
     mylcd.lcd_display_string("====================", 2)
-    mylcd.lcd_display_string("Status: Armed", 3)
+    mylcd.lcd_display_string("Armed - No Alarm", 3)
     mylcd.lcd_display_string("====================", 4)
 
     while True:
@@ -93,6 +93,9 @@ try:
                 if (sensor.currentState):
                     print("WARNING: " + sensor.name + " is currently open!")
             securityCompromised = False
+
+            mylcd.lcd_display_string("Armed - !!!ALARM!!!", 3)
+
         else:
             if (pygame.mixer.music.get_busy()):
                 pygame.mixer.music.stop()
