@@ -33,6 +33,11 @@ class doorSensor:
     def display_output(self):
         print(self.name + " Status: " + self.status)
 
+    def get_string(self):
+        doorSensorString = self.name " Status: " + self.status
+        print(doorSensorString)
+        return doorSensorString
+
 # Create array of sensors
 sensors = []
 sensors.append(doorSensor("Front Door", 16))
@@ -88,6 +93,7 @@ try:
 
         # Time delay
         time.sleep(0.5)
+        os.system('clear')
 
 except KeyboardInterrupt:
     print("Goodbye")
