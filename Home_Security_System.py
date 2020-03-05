@@ -78,6 +78,7 @@ try:
                 sensor.previousState = sensor.currentState
 
             sensor.display_output()
+            print("i=" + i)
             mylcd.lcd_display_string(sensor.get_string(), i)
             ++i
 
