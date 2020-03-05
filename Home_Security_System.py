@@ -58,47 +58,40 @@ pygame.mixer.music.set_volume(1.0)
 
 
 
-
 # Main Function
 os.system('clear')
 
-# Loop through each sensor and update its states
-i=1
-for sensor in sensors:
-    sensor.currentState = GPIO.input(sensor.pin)
-    if (sensor.currentState):
-        securityCompromised = True
-        if (not pygame.mixer.music.get_busy()):
-            pygame.mixer.music.load(alarmSoundLocation)
-            pygame.mixer.music.play(-1)
-        if (sensor.currentState != sensor.previousState):
-            sensor.status = "Open"
-            sensor.previousState = sensor.currentState
-    elif (sensor.currentState != sensor.previousState):
-        sensor.status = "Closed"
-        sensor.previousState = sensor.currentState
-
-    sensor.display_output()
-    # Display on LCD Screen
-    mylcd.lcd_display_string(print(sensor.display_output()), i)
-
-i=1
-
-
-
-
-
-# If there has been a compromise, display the compromised locations
-if (securityCompromised):
-    print("")
-    print("")
+try:
     for sensor in sensors:
+        sensor.currentState = GPIO.input(sensor.pin)
         if (sensor.currentState):
-            print("WARNING: " + sensor.name + " is currently open!")
-    securityCompromised = False
-else:
-    if (pygame.mixer.music.get_busy()):
-        pygame.mixer.music.stop()
+            securityCompromised = True
+            if (not pygame.mixer.music.get_busy()):
+                pygame.mixer.music.load(alarmSoundLocation)
+                pygame.mixer.music.play(-1)
+            if (sensor.currentState != sensor.previousState):
+                sensor.status = "Open"
+                sensor.previousState = sensor.currentState
+        elif (sensor.currentState != sensor.previousState):
+            sensor.status = "Closed"
+            sensor.previousState = sensor.currentState
 
-# Time delay
-time.sleep(0.5)
+        sensor.display_output()
+
+        # If there has been a compromise, display the compromised locations
+        if (securityCompromised):
+            print("")
+            print("")
+            for sensor in sensors:
+                if (sensor.currentState):
+                    print("WARNING: " + sensor.name + " is currently open!")
+            securityCompromised = False
+        else:
+            if (pygame.mixer.music.get_busy()):
+                pygame.mixer.music.stop()
+
+        # Time delay
+        time.sleep(0.5)
+
+except KeyboardInterrupt:
+    print("Goodbye")
