@@ -34,16 +34,16 @@ class doorSensor:
         print(self.name + " Status: " + self.status)
 
     def get_string(self):
-        doorSensorString = self.name + " Status: " + self.status
+        doorSensorString = self.name + ":" + self.status
         print(doorSensorString)
         return doorSensorString
 
 # Create array of sensors
 sensors = []
-sensors.append(doorSensor("Front Door", 16))
-sensors.append(doorSensor("Back Door", 26))
-sensors.append(doorSensor("Garage Door", 20))
-sensors.append(doorSensor("Basement Door", 21))
+sensors.append(doorSensor("Front", 16))
+sensors.append(doorSensor("Back", 26))
+sensors.append(doorSensor("Garage", 20))
+sensors.append(doorSensor("Basement", 21))
 
 # Set up the door sensor pins.
 for sensor in sensors:
@@ -62,6 +62,7 @@ os.system('clear')
 
 try:
     while True:
+        i=1
         for sensor in sensors:
             sensor.currentState = GPIO.input(sensor.pin)
             if (sensor.currentState):
@@ -77,7 +78,8 @@ try:
                 sensor.previousState = sensor.currentState
 
             sensor.display_output()
-            mylcd.lcd_display_string(sensor.get_string(), 1)
+            mylcd.lcd_display_string(sensor.get_string(), i)
+            ++i
 
         # If there has been a compromise, display the compromised locations
         if (securityCompromised):
