@@ -19,3 +19,16 @@ Left to right look at keypad 14,15,18,13,17,27,22
 COL [18, 14, 17]
 
 ROW [15, 22, 27, 13]
+
+
+
+Dependencies
+============
+sudo apt-get install i2c-tools
+sudo apt-get install python-smbus
+i2cdetect -y 1
+
+
+Tutorial
+============
+https://howchoo.com/g/zwq2zwixotu/how-to-make-a-raspberry-pi-smart-alarm-clock

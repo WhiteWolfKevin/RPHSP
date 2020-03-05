@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+# Imports for Original Security System
 import RPi.GPIO as GPIO
 import time
 import sys
@@ -5,11 +8,18 @@ import signal
 import os
 import pygame
 
+# Imports for LCD Screen
+import i2c_driver
+import time
+
 # Global Variables
 alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"
 
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
+
+# Set LCD Settings
+mylcd = i2c_driver.LCD()
 
 # Door Sensor class
 class doorSensor:
@@ -23,7 +33,7 @@ class doorSensor:
     def display_output(self):
         print(self.name + " Status: " + self.status)
 
-#Create array of sensors
+# Create array of sensors
 sensors = []
 sensors.append(doorSensor("Front Door", 16))
 sensors.append(doorSensor("Back Door", 26))
@@ -41,6 +51,13 @@ alarmSystemArmed = False
 # Audio player settings
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
+
+
+
+
+
+
+
 
 # Main Function
 os.system('clear')
@@ -62,6 +79,15 @@ for sensor in sensors:
 
     sensor.display_output()
 
+
+
+# Display on LCD Screen
+mylcd.lcd_display_string(sensors[1].display_output(), 1)
+mylcd.lcd_display_string(sensors[2].display_output(), 2)
+mylcd.lcd_display_string(sensors[3].display_output(), 3)
+mylcd.lcd_display_string(sensors[4].display_output(), 4)   
+
+
 # If there has been a compromise, display the compromised locations
 if (securityCompromised):
     print("")
@@ -74,5 +100,5 @@ else:
     if (pygame.mixer.music.get_busy()):
         pygame.mixer.music.stop()
 
-#Time delay
+# Time delay
 time.sleep(0.5)
