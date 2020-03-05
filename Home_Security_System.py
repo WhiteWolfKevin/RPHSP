@@ -52,12 +52,6 @@ alarmSystemArmed = False
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
-
-
-
-
-
-
 # Main Function
 os.system('clear')
 
@@ -76,8 +70,9 @@ try:
             elif (sensor.currentState != sensor.previousState):
                 sensor.status = "Closed"
                 sensor.previousState = sensor.currentState
-                
+
             sensor.display_output()
+            mylcd.lcd_display_string("Hello World", 1)
 
         # If there has been a compromise, display the compromised locations
         if (securityCompromised):
