@@ -37,15 +37,17 @@ def print_key(key):
     # Clear the line and reset the counter if 6 digits have been entered
     if (counter == 6):
         mylcd.lcd_display_string("                    ", 2)
-        counter = 0
-        mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
-        counter += 1
+        mylcd.lcd_display_string_pos(str(key), 2, 6)
+        counter = 1
     elif (key == "*"):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
     elif (key == "#"):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
+    else:
+        mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
+        counter += 1
 
 # -------------------------------------------Keypad Configuration
 
