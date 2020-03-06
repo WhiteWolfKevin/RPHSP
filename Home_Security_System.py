@@ -48,8 +48,7 @@ def securitySystem():
     while True:
 
         # Variables
-        # global alarmArmed = False
-        alarmArmed = False
+        global alarmArmed = False
         securityBreach = False
 
         # Print alarm status
@@ -109,5 +108,4 @@ try:
         time.sleep(2)
 
 except KeyboardInterrupt:
-    mylcd.lcd_clear()
     print("Goodbye")
