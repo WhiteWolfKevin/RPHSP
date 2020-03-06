@@ -65,7 +65,7 @@ try:
             else:
                 print(sensor.name + " Status: CLOSED")
 
-        if (securityBreach && alarmArmed):
+        if (securityBreach and alarmArmed):
             if (not pygame.mixer.music.get_busy()):
                 pygame.mixer.music.load(alarmSoundLocation)
                 pygame.mixer.music.play(-1)
