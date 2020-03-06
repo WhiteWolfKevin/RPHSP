@@ -29,7 +29,7 @@ COL_PINS = [18, 14, 17] # BCM numbering
 
 def print_key(key):
     print(key)
-    mylcd.lcd_display_string(key, 2)
+    mylcd.lcd_display_string(str(key), 2)
 # -------------------------------------------Keypad Configuration
 
 # Global Variables
