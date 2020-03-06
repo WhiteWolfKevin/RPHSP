@@ -11,7 +11,6 @@ import threading
 
 # Imports for LCD Screen
 import i2c_driver
-import time
 
 # Imports for keypad
 from pad4pi import rpi_gpio
@@ -39,8 +38,12 @@ def print_key(key):
     if (counter == 6):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
-
-
+    elif (key == "*"):
+        mylcd.lcd_display_string("                    ", 2)
+        counter = 0
+    elif (key == "#")
+        mylcd.lcd_display_string("Entered", 2)
+        counter = 0
 
     mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
     counter += 1
@@ -158,7 +161,6 @@ except KeyboardInterrupt:
     print("Goodbye")
 
 finally:
-    armingSystemRunning.join()
     mylcd.lcd_clear()
     mylcd.backlight(0)
     keypad.cleanup()
