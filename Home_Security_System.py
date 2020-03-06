@@ -57,7 +57,7 @@ try:
             if (sensor.currentState):
                 # This means the door/window is open
                 securityBreach = True
-                print("WARNING: " + sensor.name + " Status: OPEN")
+                print(sensor.name + " Status: OPEN - WARNING!!!")
             else:
                 print(sensor.name + " Status: CLOSED")
 
