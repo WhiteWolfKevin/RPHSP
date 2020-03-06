@@ -49,7 +49,11 @@ try:
     while True:
 
         # Variables
+        alarmArmed = True
         securityBreach = False
+
+        # Print alarm status
+        print("Alarm Status: " + alarmArmed)
 
         # Check each sensor for a security breach
         for sensor in sensors:
@@ -61,7 +65,7 @@ try:
             else:
                 print(sensor.name + " Status: CLOSED")
 
-        if (securityBreach):
+        if (securityBreach && alarmArmed):
             if (not pygame.mixer.music.get_busy()):
                 pygame.mixer.music.load(alarmSoundLocation)
                 pygame.mixer.music.play(-1)
