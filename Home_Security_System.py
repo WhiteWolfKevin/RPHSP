@@ -81,8 +81,8 @@ try:
                 pygame.mixer.music.stop()
 
         # Time delay
-        time.sleep(2)
-        #os.system('clear')
+        time.sleep(0.5)
+        os.system('clear')
 
 except KeyboardInterrupt:
     mylcd.lcd_clear()
