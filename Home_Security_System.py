@@ -52,6 +52,7 @@ def securitySystem():
 
         # Variables
         securityBreach = False
+        global alarmArmed
 
         # Print alarm status
         if (alarmArmed):
@@ -83,6 +84,10 @@ def securitySystem():
 
 # Arming/Disarming System Thread
 def controlPanel():
+
+    # Variables
+    global alarmArmed
+
     if (alarmArmed):
         userResponse = raw_input("Disarm the system? (y/n): ")
         if (userResponse == "y"):
