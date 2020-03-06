@@ -27,8 +27,14 @@ KEYPAD = [
 ROW_PINS = [15, 22, 27, 13] # BCM numbering
 COL_PINS = [18, 14, 17] # BCM numbering
 
+counter = 0
+
 def print_key(key):
-    mylcd.lcd_display_string_pos(str(key), 2, 50)
+    if (counter == 6):
+        mylcd.lcd_display_string("", 2)
+        counter = 0
+    mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
+    counter += 1
 # -------------------------------------------Keypad Configuration
 
 # Global Variables
