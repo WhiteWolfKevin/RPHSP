@@ -88,14 +88,15 @@ def controlPanel():
     # Variables
     global alarmArmed
 
-    if (alarmArmed):
-        userResponse = raw_input("Disarm the system? (y/n): ")
-        if (userResponse == "y"):
-            alarmArmed = False
-    else:
-        userResponse = raw_input("Arm the system? (y/n): ")
-        if (userResponse == "y"):
-            alarmArmed = True
+    while True:
+        if (alarmArmed):
+            userResponse = raw_input("Disarm the system? (y/n): ")
+            if (userResponse == "y"):
+                alarmArmed = False
+        else:
+            userResponse = raw_input("Arm the system? (y/n): ")
+            if (userResponse == "y"):
+                alarmArmed = True
 
 # Main Function
 try:
