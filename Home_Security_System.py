@@ -34,7 +34,7 @@ def print_key(key):
     global counter
 
     if (counter == 6):
-        mylcd.lcd_display_string("", 2)
+        mylcd.lcd_display_string("Clear", 2)
         counter = 0
     mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
     counter += 1
