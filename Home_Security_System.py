@@ -53,7 +53,10 @@ try:
         securityBreach = False
 
         # Print alarm status
-        print("Alarm Status: " + alarmArmed)
+        if (alarmArmed):
+            print("Alarm Status: Armed")
+        else:
+            print("Alarm Status: Disarmed")
 
         # Check each sensor for a security breach
         for sensor in sensors:
