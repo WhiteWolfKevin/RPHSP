@@ -77,8 +77,8 @@ def securitySystem():
                 pygame.mixer.music.stop()
 
         # Time delay
-        time.sleep(0.5)
-        os.system('clear')
+        time.sleep(2)
+        #os.system('clear')
 
 # Arming/Disarming System Thread
 def controlPanel():
