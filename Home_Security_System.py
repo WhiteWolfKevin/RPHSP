@@ -43,12 +43,14 @@ for sensor in sensors:
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
+# Global Variables
+alarmArmed = False
+
 # Security System Thread
 def securitySystem():
     while True:
 
         # Variables
-        global alarmArmed = False
         securityBreach = False
 
         # Print alarm status
