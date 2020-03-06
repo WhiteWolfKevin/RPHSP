@@ -38,15 +38,15 @@ def print_key(key):
     if (counter == 6):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
+        mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
+        counter += 1
     elif (key == "*"):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
     elif (key == "#"):
-        mylcd.lcd_display_string("Entered", 2)
+        mylcd.lcd_display_string("                    ", 2)
         counter = 0
 
-    mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
-    counter += 1
 # -------------------------------------------Keypad Configuration
 
 # Global Variables
@@ -57,6 +57,7 @@ GPIO.setmode(GPIO.BCM)
 
 # Set LCD Settings
 mylcd = i2c_driver.LCD()
+mylcd.backlight(1)
 
 # Door Sensor class
 class doorSensor:
