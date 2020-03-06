@@ -87,7 +87,7 @@ try:
     securitySystemRunning.daemon = True
     securitySystemRunning.start()
 
-    while true:
+    while True:
         # Keep Running Application
 
 except KeyboardInterrupt:
