@@ -27,7 +27,7 @@ KEYPAD = [
 ROW_PINS = [15, 22, 27, 13] # BCM numbering
 COL_PINS = [18, 14, 17] # BCM numbering
 
-counter = 0
+global counter = 0
 
 def print_key(key):
     if (counter == 6):
