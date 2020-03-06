@@ -1,10 +1,13 @@
+#!/usr/bin/env python
+
+# Imports for Original Security System
 import RPi.GPIO as GPIO
-import threading
 import time
 import sys
 import signal
 import os
 import pygame
+import threading
 
 # Global Variables
 alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"

@@ -7,6 +7,7 @@ import sys
 import signal
 import os
 import pygame
+import threading
 
 # Imports for LCD Screen
 import i2c_driver
@@ -49,7 +50,7 @@ try:
     while True:
 
         # Variables
-        alarmArmed = True
+        alarmArmed = False
         securityBreach = False
 
         # Print alarm status
