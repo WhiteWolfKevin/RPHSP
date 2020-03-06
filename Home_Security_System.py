@@ -41,7 +41,7 @@ def print_key(key):
     elif (key == "*"):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
-    elif (key == "#")
+    elif (key == "#"):
         mylcd.lcd_display_string("Entered", 2)
         counter = 0
 
