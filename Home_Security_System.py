@@ -40,68 +40,49 @@ class doorSensor:
 
 # Create array of sensors
 sensors = []
-sensors.append(doorSensor("Front", 16))
-sensors.append(doorSensor("Back", 26))
-sensors.append(doorSensor("Garage", 20))
-sensors.append(doorSensor("Basement", 21))
+sensors.append(doorSensor("Front Door", 16))
+sensors.append(doorSensor("Living Room Window", 26))
+sensors.append(doorSensor("Garage Door", 20))
+sensors.append(doorSensor("Basement Door", 21))
 
 # Set up the door sensor pins.
 for sensor in sensors:
     GPIO.setup(sensor.pin, GPIO.IN, pull_up_down = GPIO.PUD_UP)
-
-# Variables
-securityCompromised = False
-alarmSystemArmed = False
 
 # Audio player settings
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
 # Main Function
-os.system('clear')
-
 try:
-
-    mylcd.lcd_display_string("Ras Pi Home Security", 1)
-    mylcd.lcd_display_string("====================", 2)
-    mylcd.lcd_display_string("Armed - No Alarm", 3)
-    mylcd.lcd_display_string("====================", 4)
+    os.system('clear')
 
     while True:
+
+        # Variables
+        securityBreach = False
+
+        # Check each sensor for a security breach
         for sensor in sensors:
             sensor.currentState = GPIO.input(sensor.pin)
             if (sensor.currentState):
-                securityCompromised = True
-                if (not pygame.mixer.music.get_busy()):
-                    pygame.mixer.music.load(alarmSoundLocation)
-                    pygame.mixer.music.play(-1)
-                if (sensor.currentState != sensor.previousState):
-                    sensor.status = "Open"
-                    sensor.previousState = sensor.currentState
-            elif (sensor.currentState != sensor.previousState):
-                sensor.status = "Closed"
-                sensor.previousState = sensor.currentState
+                # This means the door/window is open
+                securityBreach = True
+                print(sensor.name + " : !!!OPEN!!!")
+            else:
+                print(sensor.name + " : CLOSED")
 
-            sensor.display_output()
-
-
-        # If there has been a compromise, display the compromised locations
-        if (securityCompromised):
-            print("")
-            print("")
-            for sensor in sensors:
-                if (sensor.currentState):
-                    print("WARNING: " + sensor.name + " is currently open!")
-            securityCompromised = False
-
-            mylcd.lcd_display_string("Armed - !!!ALARM!!!", 3)
-
+        if (securityBreach):
+            if (not pygame.mixer.music.get_busy()):
+                pygame.mixer.music.load(alarmSoundLocation)
+                pygame.mixer.music.play(-1)
         else:
             if (pygame.mixer.music.get_busy()):
                 pygame.mixer.music.stop()
 
         # Time delay
         time.sleep(2)
+        #os.system('clear')
 
 except KeyboardInterrupt:
     mylcd.lcd_clear()
