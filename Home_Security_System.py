@@ -27,15 +27,21 @@ KEYPAD = [
 ROW_PINS = [15, 22, 27, 13] # BCM numbering
 COL_PINS = [18, 14, 17] # BCM numbering
 
+# Counter used to space the input
 counter = 0
 
 def print_key(key):
 
+    # Grab the global counter variable to display code entry correctly
     global counter
 
+    # Clear the line and reset the counter if 6 digits have been entered
     if (counter == 6):
         mylcd.lcd_display_string("                    ", 2)
         counter = 0
+
+
+
     mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
     counter += 1
 # -------------------------------------------Keypad Configuration
@@ -153,3 +159,5 @@ except KeyboardInterrupt:
 
 finally:
     keypad.cleanup()
+    mylcd.lcd_clear()
+    mylcd.backlight(0)
