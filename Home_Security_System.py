@@ -48,6 +48,7 @@ def securitySystem():
     while True:
 
         # Variables
+        # global alarmArmed = False
         alarmArmed = False
         securityBreach = False
 
@@ -79,6 +80,17 @@ def securitySystem():
         time.sleep(0.5)
         os.system('clear')
 
+# Arming/Disarming System Thread
+def controlPanel():
+    if (alarmArmed):
+        userResponse = raw_input("Disarm the system? (y/n): ")
+        if (userResponse == "y"):
+            alarmArmed = False
+    else:
+        userResponse = raw_input("Arm the system? (y/n): ")
+        if (userResponse == "y"):
+            alarmArmed = True
+
 # Main Function
 try:
     os.system('clear')
@@ -86,6 +98,10 @@ try:
     securitySystemRunning = threading.Thread(target=securitySystem)
     securitySystemRunning.daemon = True
     securitySystemRunning.start()
+
+    armingSystemRunning = threading.Thread(target=controlPanel)
+    armingSystemRunning.daemon = True
+    armingSystemRunning.start()
 
     while True:
         # Keep Running Application
