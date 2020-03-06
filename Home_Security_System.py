@@ -158,6 +158,7 @@ except KeyboardInterrupt:
     print("Goodbye")
 
 finally:
-    keypad.cleanup()
+    armingSystemRunning.join()
     mylcd.lcd_clear()
     mylcd.backlight(0)
+    keypad.cleanup()
