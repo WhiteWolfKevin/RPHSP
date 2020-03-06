@@ -87,6 +87,9 @@ try:
     securitySystemRunning.daemon = True
     securitySystemRunning.start()
 
+    while true:
+        # Keep Running Application
+
 except KeyboardInterrupt:
     mylcd.lcd_clear()
     print("Goodbye")
