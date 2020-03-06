@@ -43,10 +43,8 @@ for sensor in sensors:
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
-# Main Function
-try:
-    os.system('clear')
-
+# Security System Thread
+def securitySystem():
     while True:
 
         # Variables
@@ -80,6 +78,14 @@ try:
         # Time delay
         time.sleep(0.5)
         os.system('clear')
+
+# Main Function
+try:
+    os.system('clear')
+
+    securitySystemRunning = threading.Thread(target=securitySystem)
+    securitySystemRunning.daemon = True
+    securitySystemRunning.start()
 
 except KeyboardInterrupt:
     mylcd.lcd_clear()
