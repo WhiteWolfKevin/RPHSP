@@ -87,67 +87,61 @@ alarmArmed = False
 
 # Security System Thread
 def securitySystem():
-    try:
-        while True:
+    while True:
 
-            # Variables
-            securityBreach = False
-            global alarmArmed
+        # Variables
+        securityBreach = False
+        global alarmArmed
 
-            # Print alarm status
-            if (alarmArmed):
-                print("Alarm Status: Armed")
+        # Print alarm status
+        if (alarmArmed):
+            print("Alarm Status: Armed")
+        else:
+            print("Alarm Status: Disarmed")
+
+        # Check each sensor for a security breach
+        for sensor in sensors:
+            sensor.currentState = GPIO.input(sensor.pin)
+            if (sensor.currentState):
+                # This means the door/window is open
+                securityBreach = True
+                print(sensor.name + " Status: OPEN - WARNING!!!")
             else:
-                print("Alarm Status: Disarmed")
+                print(sensor.name + " Status: CLOSED")
 
-            # Check each sensor for a security breach
-            for sensor in sensors:
-                sensor.currentState = GPIO.input(sensor.pin)
-                if (sensor.currentState):
-                    # This means the door/window is open
-                    securityBreach = True
-                    print(sensor.name + " Status: OPEN - WARNING!!!")
-                else:
-                    print(sensor.name + " Status: CLOSED")
+        if (securityBreach and alarmArmed):
+            if (not pygame.mixer.music.get_busy()):
+                pygame.mixer.music.load(alarmSoundLocation)
+                pygame.mixer.music.play(-1)
+        else:
+            if (pygame.mixer.music.get_busy()):
+                pygame.mixer.music.stop()
 
-            if (securityBreach and alarmArmed):
-                if (not pygame.mixer.music.get_busy()):
-                    pygame.mixer.music.load(alarmSoundLocation)
-                    pygame.mixer.music.play(-1)
-            else:
-                if (pygame.mixer.music.get_busy()):
-                    pygame.mixer.music.stop()
-
-            # Time delay
-            time.sleep(2)
-            os.system('clear')
-    finally:
-        mylcd.lcd_clear()
-        mylcd.backlight(0)
+        # Time delay
+        time.sleep(2)
+        os.system('clear')
 
 # Arming/Disarming System Thread
 def controlPanel():
-    try:
-        factory = rpi_gpio.KeypadFactory()
-        keypad = factory.create_keypad(keypad=KEYPAD, row_pins=ROW_PINS, col_pins=COL_PINS)
-        keypad.registerKeyPressHandler(print_key)
+    factory = rpi_gpio.KeypadFactory()
+    keypad = factory.create_keypad(keypad=KEYPAD, row_pins=ROW_PINS, col_pins=COL_PINS)
+    keypad.registerKeyPressHandler(print_key)
 
-        mylcd.lcd_display_string("Enter Passcode:", 1)
+    mylcd.lcd_display_string("Enter Passcode:", 1)
 
-        # Variables
-        global alarmArmed
+    # Variables
+    global alarmArmed
 
-        while True:
-            if (alarmArmed):
-                userResponse = raw_input("Disarm the system? (y/n): ")
-                if (userResponse == "y"):
-                    alarmArmed = False
-            else:
-                userResponse = raw_input("Arm the system? (y/n): ")
-                if (userResponse == "y"):
-                    alarmArmed = True
-    finally:
-        keypad.cleanup()
+    while True:
+        if (alarmArmed):
+            userResponse = raw_input("Disarm the system? (y/n): ")
+            if (userResponse == "y"):
+                alarmArmed = False
+        else:
+            userResponse = raw_input("Arm the system? (y/n): ")
+            if (userResponse == "y"):
+                alarmArmed = True
+
 
 # Main Function
 try:
@@ -167,4 +161,7 @@ try:
         time.sleep(2)
 
 except KeyboardInterrupt:
-    print("Goodbye")
+
+    mylcd.lcd_clear()
+    mylcd.backlight(0)
+    keypad.cleanup()
