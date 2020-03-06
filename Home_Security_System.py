@@ -89,7 +89,8 @@ try:
 
     while True:
         # Keep Running Application
-
+        time.sleep(2)
+        
 except KeyboardInterrupt:
     mylcd.lcd_clear()
     print("Goodbye")
