@@ -26,17 +26,6 @@ class doorSensor:
     def __init__(self, name, pin):
         self.name = name
         self.pin = pin
-        self.status = "null"
-        self.currentState = True
-        self.previousState = True
-
-    def display_output(self):
-        print(self.name + " Status: " + self.status)
-
-    def get_string(self):
-        doorSensorString = self.name + ":" + self.status
-        print(doorSensorString)
-        return doorSensorString
 
 # Create array of sensors
 sensors = []
@@ -68,9 +57,9 @@ try:
             if (sensor.currentState):
                 # This means the door/window is open
                 securityBreach = True
-                print(sensor.name + " : !!!OPEN!!!")
+                print("WARNING: " + sensor.name + " Status: OPEN")
             else:
-                print(sensor.name + " : CLOSED")
+                print(sensor.name + " Status: CLOSED")
 
         if (securityBreach):
             if (not pygame.mixer.music.get_busy()):
