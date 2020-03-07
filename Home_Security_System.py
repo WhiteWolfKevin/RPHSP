@@ -118,7 +118,7 @@ def securitySystem():
                 pygame.mixer.music.stop()
 
         # Time delay
-        time.sleep(2)
+        time.sleep(0.5)
         os.system('clear')
 
 # Arming/Disarming System Thread
@@ -158,7 +158,7 @@ try:
     while True:
         # Keep Running Application
         print("Starting sleep...")
-        time.sleep(2)
+        time.sleep(0.5)
 
 except KeyboardInterrupt:
 
