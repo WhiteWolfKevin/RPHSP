@@ -29,24 +29,62 @@ COL_PINS = [18, 14, 17] # BCM numbering
 # Counter used to space the input
 counter = 0
 
+# String used to hold the entered code
+userEntry = ""
+
 def print_key(key):
 
     # Grab the global counter variable to display code entry correctly
     global counter
 
-    # Clear the line and reset the counter if 6 digits have been entered
-    if (counter == 6):
-        mylcd.lcd_display_string("                    ", 2)
-        mylcd.lcd_display_string_pos(str(key), 2, 6)
-        counter = 1
+    # Grab the global string variable to hold the entered key
+    global userEntry
+
+    # Grab the global value for arming and disarming the system
+    global alarmArmed
+
+    # Correct Keycode
+    correctKey = "123456"
+
+    # Do stuff depending on what key was pressed
+    if (key == "#"):
+
+        if (userEntry == correctKey):
+            mylcd.lcd_display_string("Passcode Correct!", 3)
+
+            if (alarmArmed):
+                alarmArmed = False
+            elif (not alarmArmed):
+                alarmArmed = True
+
+        else:
+            mylcd.lcd_display_string("Incorrect Passcode!", 3)
+
+        mylcd.lcd_display_string("      [      ]      ", 2)
+        counter = 0
+
+        # Clear User Code
+        userEntry = ""
+
     elif (key == "*"):
-        mylcd.lcd_display_string("                    ", 2)
+        mylcd.lcd_display_string("      [      ]      ", 2)
+        mylcd.lcd_display_string("                    ", 3)
         counter = 0
-    elif (key == "#"):
-        mylcd.lcd_display_string("                    ", 2)
-        counter = 0
+
+        # Clear User Code
+        userEntry = ""
+    elif (counter == 6):
+        # Reset user code with pressed key
+        userEntry = str(key)
+
+        mylcd.lcd_display_string("      [      ]      ", 2)
+        mylcd.lcd_display_string_pos(str(key), 2, 7)
+        counter = 1
     else:
-        mylcd.lcd_display_string_pos(str(key), 2, (6 + counter))
+        # Add pressed key
+        userEntry = userEntry + str(key)
+
+        mylcd.lcd_display_string_pos(str(key), 2, (7 + counter))
         counter += 1
 
 # -------------------------------------------Keypad Configuration
@@ -118,7 +156,7 @@ def securitySystem():
                 pygame.mixer.music.stop()
 
         # Time delay
-        time.sleep(0.5)
+        time.sleep(2)
         os.system('clear')
 
 # Arming/Disarming System Thread
@@ -128,6 +166,8 @@ def controlPanel():
     keypad.registerKeyPressHandler(print_key)
 
     mylcd.lcd_display_string("Enter Passcode:", 1)
+    mylcd.lcd_display_string("      [      ]      ", 2)
+    mylcd.lcd_display_string("Clear:*   Submit:#", 4)
 
     # Variables
     global alarmArmed
@@ -158,7 +198,7 @@ try:
     while True:
         # Keep Running Application
         print("Starting sleep...")
-        time.sleep(0.5)
+        time.sleep(2)
 
 except KeyboardInterrupt:
 
