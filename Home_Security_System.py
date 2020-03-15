@@ -31,62 +31,6 @@ counter = 0
 
 # String used to hold the entered code
 userEntry = ""
-
-def print_key(key):
-
-    # Grab the global counter variable to display code entry correctly
-    global counter
-
-    # Grab the global string variable to hold the entered key
-    global userEntry
-
-    # Grab the global value for arming and disarming the system
-    global alarmArmed
-
-    # Correct Keycode
-    correctKey = "123456"
-
-    # Do stuff depending on what key was pressed
-    if (key == "#"):
-
-        if (userEntry == correctKey):
-            mylcd.lcd_display_string("Passcode Correct!", 3)
-
-            if (alarmArmed):
-                alarmArmed = False
-            elif (not alarmArmed):
-                alarmArmed = True
-
-        else:
-            mylcd.lcd_display_string("Incorrect Passcode!", 3)
-
-        mylcd.lcd_display_string("      [      ]      ", 2)
-        counter = 0
-
-        # Clear User Code
-        userEntry = ""
-
-    elif (key == "*"):
-        mylcd.lcd_display_string("      [      ]      ", 2)
-        mylcd.lcd_display_string("                    ", 3)
-        counter = 0
-
-        # Clear User Code
-        userEntry = ""
-    elif (counter == 6):
-        # Reset user code with pressed key
-        userEntry = str(key)
-
-        mylcd.lcd_display_string("      [      ]      ", 2)
-        mylcd.lcd_display_string_pos(str(key), 2, 7)
-        counter = 1
-    else:
-        # Add pressed key
-        userEntry = userEntry + str(key)
-
-        mylcd.lcd_display_string_pos(str(key), 2, (7 + counter))
-        counter += 1
-
 # -------------------------------------------Keypad Configuration
 
 # Global Variables
@@ -125,6 +69,9 @@ alarmArmed = False
 
 # Security System Thread
 def securitySystem():
+
+    previousAlarmStatus = False
+
     while True:
 
         # Variables
@@ -133,9 +80,15 @@ def securitySystem():
 
         # Print alarm status
         if (alarmArmed):
-            print("Alarm Status: Armed")
+            if (alarmArmed != previousAlarmStatus):
+                print("Alarm Status: Armed")
+
+            previousAlarmStatus = alarmArmed
         else:
-            print("Alarm Status: Disarmed")
+            if (alarmArmed != previousAlarmStatus):
+                print("Alarm Status: Disarmed")
+
+        previousAlarmStatus = alarmArmed
 
         # Check each sensor for a security breach
         for sensor in sensors:
@@ -165,10 +118,6 @@ def controlPanel():
     keypad = factory.create_keypad(keypad=KEYPAD, row_pins=ROW_PINS, col_pins=COL_PINS)
     keypad.registerKeyPressHandler(print_key)
 
-    mylcd.lcd_display_string("Enter Passcode:", 1)
-    mylcd.lcd_display_string("      [      ]      ", 2)
-    mylcd.lcd_display_string("Clear:*   Submit:#", 4)
-
     # Variables
     global alarmArmed
 
@@ -182,18 +131,79 @@ def controlPanel():
             if (userResponse == "y"):
                 alarmArmed = True
 
+def print_key(key):
+
+    # Grab the global counter variable to display code entry correctly
+    global counter
+
+    # Grab the global string variable to hold the entered key
+    global userEntry
+
+    # Grab the global value for arming and disarming the system
+    global alarmArmed
+
+    # Correct Keycode
+    correctKey = "123456"
+
+    # Do stuff depending on what key was pressed
+    if (key == "#"):
+
+        if (userEntry == correctKey):
+            mylcd.lcd_display_string("                    ", 2)
+            mylcd.lcd_display_string("Passcode Correct!", 2)
+
+            if (alarmArmed):
+                alarmArmed = False
+            elif (not alarmArmed):
+                alarmArmed = True
+        else:
+            mylcd.lcd_display_string("                    ", 2)
+            mylcd.lcd_display_string("Incorrect Passcode!", 2)
+
+        mylcd.lcd_display_string("Passcode:[      ]", 1)
+        counter = 0
+
+        # Clear User Code
+        userEntry = ""
+
+    elif (key == "*"):
+        mylcd.lcd_display_string("Passcode:[      ]", 1)
+        mylcd.lcd_display_string("                    ", 2)
+        counter = 0
+
+        # Clear User Code
+        userEntry = ""
+    elif (counter == 6):
+        # Reset user code with pressed key
+        userEntry = str(key)
+
+        mylcd.lcd_display_string("Passcode:[      ]", 1)
+        mylcd.lcd_display_string_pos(str(key), 1, 10)
+        counter = 1
+    else:
+        # Add pressed key
+        userEntry = userEntry + str(key)
+
+        mylcd.lcd_display_string_pos(str(key), 1, (10 + counter))
+        counter += 1
+
 
 # Main Function
 try:
     os.system('clear')
 
+    # Set the LCD to the default display
+    mylcd.lcd_display_string("Passcode:[      ]", 1)
+    mylcd.lcd_display_string("Alarm: Disarmed", 3)
+    mylcd.lcd_display_string("Clear:*   Submit:#", 4)
+
     securitySystemRunning = threading.Thread(target=securitySystem)
     securitySystemRunning.daemon = True
     securitySystemRunning.start()
 
-    armingSystemRunning = threading.Thread(target=controlPanel)
-    armingSystemRunning.daemon = True
-    armingSystemRunning.start()
+    controlPanelRunning = threading.Thread(target=controlPanel)
+    controlPanelRunning.daemon = True
+    controlPanelRunning.start()
 
     while True:
         # Keep Running Application
@@ -204,4 +214,4 @@ except KeyboardInterrupt:
 
     mylcd.lcd_clear()
     mylcd.backlight(0)
-    keypad.cleanup()
+    GPIO.cleanup()
