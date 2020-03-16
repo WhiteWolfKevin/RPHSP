@@ -4,6 +4,7 @@ Raspberry Pi Home Security Project
 Requirements
 1. pip install pi-rc522
 2. pip install pad4pi
+3. pip install redis
 
 
 
@@ -32,3 +33,8 @@ i2cdetect -y 1
 Tutorial
 ============
 https://howchoo.com/g/zwq2zwixotu/how-to-make-a-raspberry-pi-smart-alarm-clock
+
+PHP Redis Admin
+===============
+https://github.com/erikdubbelboer/phpRedisAdmin
+https://www.knowledgebase-script.com/kb/article/how-to-enable-mbstring-in-php-46.html
