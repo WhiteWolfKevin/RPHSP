@@ -3,14 +3,20 @@
 # Imports for Original Security System
 import RPi.GPIO as GPIO
 import time
-import sys
-import signal
 import os
 import pygame
 import threading
+#import sys
+#import signal
+
+# Import for Redis
+import redis
 
 # Global Variables
 alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"
+
+# Redis server configuration
+redisServer = redis.Redis(host='piserver', port=6379, db=0)
 
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
@@ -36,31 +42,19 @@ for sensor in sensors:
 pygame.mixer.init()
 pygame.mixer.music.set_volume(1.0)
 
-# Global Variables
-alarmArmed = False
-
 # Security System Thread
 def securitySystem():
 
-    previousAlarmStatus = False
-
     while True:
+
+        # Grab Alarm Status from Redis server
+        alarmStatus = redisServer.get("alarmStatus")
 
         # Variables
         securityBreach = False
-        global alarmArmed
 
         # Print alarm status
-        if (alarmArmed):
-            if (alarmArmed != previousAlarmStatus):
-                print("Alarm Status: Armed")
-
-            previousAlarmStatus = alarmArmed
-        else:
-            if (alarmArmed != previousAlarmStatus):
-                print("Alarm Status: Disarmed")
-
-        previousAlarmStatus = alarmArmed
+        print(alarmStatus)
 
         # Check each sensor for a security breach
         for sensor in sensors:
@@ -72,7 +66,7 @@ def securitySystem():
             else:
                 print(sensor.name + " Status: CLOSED")
 
-        if (securityBreach and alarmArmed):
+        if (securityBreach and alarmStatus == "Armed"):
             if (not pygame.mixer.music.get_busy()):
                 pygame.mixer.music.load(alarmSoundLocation)
                 pygame.mixer.music.play(-1)
