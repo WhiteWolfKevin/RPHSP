@@ -53,19 +53,22 @@ def print_key(key):
 
         if (userEntry == correctKey):
 
-            if (r.get("alarmStatus") == "Armed"):
-                r.set("alarmStatus", "Disarmed")
-            elif (r.get("alarmStatus") == "Disarmed"):
-                r.set("alarmStatus", "Armed")
-            else:
-                r.set("alarmStatus", "Disarmed")
-
-            mylcd.lcd_display_string("                    ", 2)
             mylcd.lcd_display_string("Passcode Correct!", 2)
+            time.sleep(1)
+            mylcd.lcd_display_string("                    ", 2)
+
+            if (redisServer.get("alarmStatus") == "Armed"):
+                redisServer.set("alarmStatus", "Disarmed")
+            elif (redisServer.get("alarmStatus") == "Disarmed"):
+                redisServer.set("alarmStatus", "Armed")
+            else:
+                redisServer.set("alarmStatus", "Disarmed")
 
         else:
-            mylcd.lcd_display_string("                    ", 2)
+
             mylcd.lcd_display_string("Incorrect Passcode!", 2)
+            time.sleep(1)
+            mylcd.lcd_display_string("                    ", 2)
 
         mylcd.lcd_display_string("Passcode:[      ]", 1)
         counter = 0
@@ -85,21 +88,19 @@ def print_key(key):
         userEntry = str(key)
 
         mylcd.lcd_display_string("Passcode:[      ]", 1)
-        mylcd.lcd_display_string_pos(str(key), 1, 10)
+        # mylcd.lcd_display_string_pos(str(key), 1, 10)
+        mylcd.lcd_display_string_pos("*", 1, 10)
         counter = 1
     else:
         # Add pressed key
         userEntry = userEntry + str(key)
 
-        mylcd.lcd_display_string_pos(str(key), 1, (10 + counter))
+        # mylcd.lcd_display_string_pos(str(key), 1, (10 + counter))
+        mylcd.lcd_display_string_pos("*", 1, (10 + counter))
         counter += 1
 
-
-
-
-
 # Redis server configuration
-r = redis.Redis(host='localhost', port=6379, db=0)
+redisServer = redis.Redis(host='piserver', port=6379, db=0)
 
 # Main Function
 try:
@@ -118,15 +119,15 @@ try:
 
     while True:
 
-        alarmStatus = r.get("alarmStatus")
-        print("Alarm Status: " + alarmStatus)
+        alarmStatus = redisServer.get("alarmStatus")
+        print("Alarm Status: " +  str(alarmStatus))
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
             mylcd.lcd_display_string("                    ", 3)
             mylcd.lcd_display_string("Alarm: " + str(alarmStatus), 3)
 
-        time.sleep(3)
+        time.sleep(2)
 
 except KeyboardInterrupt:
     mylcd.lcd_clear()

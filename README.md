@@ -9,7 +9,7 @@ Requirements
 
 
 Keypad Configuration
-
+=====================
 GPIO Pin Numbers
 14,15,18,17,27,22,13
 
@@ -20,6 +20,10 @@ Left to right look at keypad 14,15,18,13,17,27,22
 COL [18, 14, 17]
 
 ROW [15, 22, 27, 13]
+
+* To adjust the key delay, go to this file and edit the "DEFAULT_KEY_DELAY" value
+/home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
+
 
 
 
