@@ -4,6 +4,7 @@
 import RPi.GPIO as GPIO
 import os
 import time
+import threading
 
 # Import for Redis
 import redis
@@ -38,6 +39,11 @@ userEntry = ""
 # -------------------------------------------Keypad Configuration
 
 def print_key(key):
+
+    # Reset backlight timer
+    global backlightTimer
+    backlightTimer = 10
+    mylcd.backlight(1)
 
     # Grab the global counter variable to display code entry correctly
     global counter
@@ -102,8 +108,20 @@ def print_key(key):
 # Redis server configuration
 redisServer = redis.Redis(host='piserver', port=6379, db=0)
 
-# Main Function
-try:
+# Backlight timer
+backlightTimer = 10
+
+def backlightCountdown():
+    global backlightTimer
+    while True:
+        while (backlightTimer > 0):
+            backlightTimer = backlightTimer - 1
+            time.sleep(1)
+
+        mylcd.backlight(0)
+
+
+def controlPanel():
     os.system('clear')
 
     # Keypad configuration
@@ -127,9 +145,27 @@ try:
             mylcd.lcd_display_string("                    ", 3)
             mylcd.lcd_display_string("Alarm: " + str(alarmStatus), 3)
 
+        time.sleep(1)
+
+        global backlightTimer
+        print("Backlight Timer: " + str(backlightTimer))
+
+# Main Function
+try:
+    controlPanelRunning = threading.Thread(target=controlPanel)
+    controlPanelRunning.daemon = True
+    controlPanelRunning.start()
+
+    backlightCountdownRunning = threading.Thread(target=backlightCountdown)
+    backlightCountdownRunning.daemon = True
+    backlightCountdownRunning.start()
+
+    while True:
+        # Keep Running Application
         time.sleep(2)
 
 except KeyboardInterrupt:
+
     mylcd.lcd_clear()
     mylcd.backlight(0)
     GPIO.cleanup()
