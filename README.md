@@ -22,8 +22,8 @@ COL [18, 14, 17]
 ROW [15, 22, 27, 13]
 
 * To adjust the key delay, go to this file and edit the "DEFAULT_KEY_DELAY" value
+* Default value is 300
 /home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
-
 
 
 
