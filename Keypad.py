@@ -19,6 +19,23 @@ mylcd.backlight(1)
 # Imports for keypad
 from pad4pi import rpi_gpio
 
+# LED Setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(6,GPIO.OUT)
+GPIO.setup(12,GPIO.OUT)
+GPIO.output(6,0)
+GPIO.output(12,0)
+
+def accessGrantedLED():
+    GPIO.output(12,1)
+    time.sleep(1)
+    GPIO.output(12,0)
+
+def accessDeniedLED():
+    GPIO.output(6,1)
+    time.sleep(1)
+    GPIO.output(6,0)
+
 # -------------------------------------------Keypad Configuration
 KEYPAD = [
     [1, 2, 3],
@@ -52,27 +69,35 @@ def print_key(key):
     global userEntry
 
     # Correct Keycode
-    correctKey = "123456"
+    correctKeys = ["123456", "111111", "999999"]
 
     # Do stuff depending on what key was pressed
     if (key == "#"):
 
-        if (userEntry == correctKey):
+        for correctKey in correctKeys:
+            if (userEntry == correctKey):
+                mylcd.lcd_display_string("Passcode Correct!", 2)
+                accessGrantedLED()
+                time.sleep(1)
+                mylcd.lcd_display_string("                    ", 2)
 
-            mylcd.lcd_display_string("Passcode Correct!", 2)
-            time.sleep(1)
-            mylcd.lcd_display_string("                    ", 2)
+                if (redisServer.get("alarmStatus") == "Armed"):
+                    redisServer.set("alarmStatus", "Disarmed")
+                elif (redisServer.get("alarmStatus") == "Disarmed"):
+                    redisServer.set("alarmStatus", "Armed")
+                else:
+                    redisServer.set("alarmStatus", "Disarmed")
 
-            if (redisServer.get("alarmStatus") == "Armed"):
-                redisServer.set("alarmStatus", "Disarmed")
-            elif (redisServer.get("alarmStatus") == "Disarmed"):
-                redisServer.set("alarmStatus", "Armed")
+                # Break out of the for loop
+                keyNotFound = False
+                break
+
             else:
-                redisServer.set("alarmStatus", "Disarmed")
+                keyNotFound = True
 
-        else:
-
+        if (keyNotFound):
             mylcd.lcd_display_string("Incorrect Passcode!", 2)
+            accessDeniedLED()
             time.sleep(1)
             mylcd.lcd_display_string("                    ", 2)
 
