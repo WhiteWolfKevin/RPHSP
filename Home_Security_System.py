@@ -80,7 +80,6 @@ def securitySystem():
 
 # Main Function
 try:
-    os.system('clear')
 
     securitySystemRunning = threading.Thread(target=securitySystem)
     securitySystemRunning.daemon = True

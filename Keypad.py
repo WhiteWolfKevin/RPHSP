@@ -36,6 +36,22 @@ def accessDeniedLED():
     time.sleep(1)
     GPIO.output(6,0)
 
+# LCD Screen update function and locking mechanism
+updateLCDLock = threading.Lock()
+
+class LCD():
+    @staticmethod
+    def updateLCDScreen(text, line):
+        updateLCDLock.acquire()
+        mylcd.lcd_display_string(text, line)
+        updateLCDLock.release()
+
+    @staticmethod
+    def updateLCDScreenLine(text, line, position):
+        updateLCDLock.acquire()
+        mylcd.lcd_display_string_pos(text, line, position)
+        updateLCDLock.release()
+
 # -------------------------------------------Keypad Configuration
 KEYPAD = [
     [1, 2, 3],
@@ -76,10 +92,10 @@ def print_key(key):
 
         for correctKey in correctKeys:
             if (userEntry == correctKey):
-                mylcd.lcd_display_string("Passcode Correct!", 2)
+                LCD.updateLCDScreen("Passcode Correct!", 2)
                 accessGrantedLED()
                 time.sleep(1)
-                mylcd.lcd_display_string("                    ", 2)
+                LCD.updateLCDScreen("                    ", 2)
 
                 if (redisServer.get("alarmStatus") == "Armed"):
                     redisServer.set("alarmStatus", "Disarmed")
@@ -96,20 +112,20 @@ def print_key(key):
                 keyNotFound = True
 
         if (keyNotFound):
-            mylcd.lcd_display_string("Incorrect Passcode!", 2)
+            LCD.updateLCDScreen("Incorrect Passcode!", 2)
             accessDeniedLED()
             time.sleep(1)
-            mylcd.lcd_display_string("                    ", 2)
+            LCD.updateLCDScreen("                    ", 2)
 
-        mylcd.lcd_display_string("Passcode:[      ]", 1)
+        LCD.updateLCDScreen("Passcode:[      ]", 1)
         counter = 0
 
         # Clear User Code
         userEntry = ""
 
     elif (key == "*"):
-        mylcd.lcd_display_string("Passcode:[      ]", 1)
-        mylcd.lcd_display_string("                    ", 2)
+        LCD.updateLCDScreen("Passcode:[      ]", 1)
+        LCD.updateLCDScreen("                    ", 2)
         counter = 0
 
         # Clear User Code
@@ -118,16 +134,14 @@ def print_key(key):
         # Reset user code with pressed key
         userEntry = str(key)
 
-        mylcd.lcd_display_string("Passcode:[      ]", 1)
-        # mylcd.lcd_display_string_pos(str(key), 1, 10)
-        mylcd.lcd_display_string_pos("*", 1, 10)
+        LCD.updateLCDScreen("Passcode:[      ]", 1)
+        LCD.updateLCDScreenLine("*", 1, 10)
         counter = 1
     else:
         # Add pressed key
         userEntry = userEntry + str(key)
 
-        # mylcd.lcd_display_string_pos(str(key), 1, (10 + counter))
-        mylcd.lcd_display_string_pos("*", 1, (10 + counter))
+        LCD.updateLCDScreenLine("*", 1, (10 + counter))
         counter += 1
 
 # Redis server configuration
@@ -155,8 +169,8 @@ def controlPanel():
     keypad.registerKeyPressHandler(print_key)
 
     # Set the LCD to the default display
-    mylcd.lcd_display_string("Passcode:[      ]", 1)
-    mylcd.lcd_display_string("Clear:*   Submit:#", 4)
+    LCD.updateLCDScreen("Passcode:[      ]", 1)
+    LCD.updateLCDScreen("Clear:*   Submit:#", 4)
 
     previousAlarmStatus = ""
 
@@ -167,8 +181,8 @@ def controlPanel():
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
-            mylcd.lcd_display_string("                    ", 3)
-            mylcd.lcd_display_string("Alarm: " + str(alarmStatus), 3)
+            LCD.updateLCDScreen("                    ", 3)
+            LCD.updateLCDScreen("Alarm: " + str(alarmStatus), 3)
 
         time.sleep(1)
 
