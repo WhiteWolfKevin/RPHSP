@@ -12,33 +12,42 @@ import redis
 # Imports for LCD Screen
 import i2c_driver
 
-# Set LCD Settings
-mylcd = i2c_driver.LCD()
-mylcd.backlight(1)
-
-# Imports for keypad
+# Imports for Keypad
 from pad4pi import rpi_gpio
 
-# LED Setup
+# Initialize LCD object, turn the LCD screen on, and create the LCD lock object
+mylcd = i2c_driver.LCD()
+mylcd.backlight(1)
+updateLCDLock = threading.Lock()
+
+# Configure Keypad Buttons
+KEYPAD = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    ["*", 0, "#"]
+]
+
+# Define pins used for Keypad, create variable for keypress counting, and create empty variable for keycode entry
+ROW_PINS = [15, 22, 27, 13]
+COL_PINS = [18, 14, 17]
+keypressCounter = 0
+userEntry = ""
+
+# Redis server configuration
+redisServer = redis.Redis(host='piserver', port=6379, db=0)
+
+# Create timer variable for the backlight timer
+backlightTimer = 10
+
+# Configure the pins for LED feedback and turn them off to start
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(6,GPIO.OUT)
 GPIO.setup(12,GPIO.OUT)
 GPIO.output(6,0)
 GPIO.output(12,0)
 
-def accessGrantedLED():
-    GPIO.output(12,1)
-    time.sleep(1)
-    GPIO.output(12,0)
-
-def accessDeniedLED():
-    GPIO.output(6,1)
-    time.sleep(1)
-    GPIO.output(6,0)
-
-# LCD Screen update function and locking mechanism
-updateLCDLock = threading.Lock()
-
+# LCD class that contains functions to update the LCD screen
 class LCD():
     @staticmethod
     def updateLCDScreen(text, line):
@@ -52,34 +61,28 @@ class LCD():
         mylcd.lcd_display_string_pos(text, line, position)
         updateLCDLock.release()
 
-# -------------------------------------------Keypad Configuration
-KEYPAD = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-    ["*", 0, "#"]
-]
+# Function for access granted LED feedback
+def accessGrantedLED():
+    GPIO.output(12,1)
+    time.sleep(1)
+    GPIO.output(12,0)
 
-ROW_PINS = [15, 22, 27, 13] # BCM numbering
-COL_PINS = [18, 14, 17] # BCM numbering
+# Function for access denied LED feedback
+def accessDeniedLED():
+    GPIO.output(6,1)
+    time.sleep(1)
+    GPIO.output(6,0)
 
-# Counter used to space the input
-counter = 0
-
-# String used to hold the entered code
-userEntry = ""
-
-# -------------------------------------------Keypad Configuration
-
-def print_key(key):
+# Function to handle keypad presses
+def keyPress(key):
 
     # Reset backlight timer
     global backlightTimer
     backlightTimer = 10
     mylcd.backlight(1)
 
-    # Grab the global counter variable to display code entry correctly
-    global counter
+    # Grab the global keypressCounter variable to display code entry correctly
+    global keypressCounter
 
     # Grab the global string variable to hold the entered key
     global userEntry
@@ -118,7 +121,7 @@ def print_key(key):
             LCD.updateLCDScreen("                    ", 2)
 
         LCD.updateLCDScreen("Passcode:[      ]", 1)
-        counter = 0
+        keypressCounter = 0
 
         # Clear User Code
         userEntry = ""
@@ -126,29 +129,23 @@ def print_key(key):
     elif (key == "*"):
         LCD.updateLCDScreen("Passcode:[      ]", 1)
         LCD.updateLCDScreen("                    ", 2)
-        counter = 0
+        keypressCounter = 0
 
         # Clear User Code
         userEntry = ""
-    elif (counter == 6):
+    elif (keypressCounter == 6):
         # Reset user code with pressed key
         userEntry = str(key)
 
         LCD.updateLCDScreen("Passcode:[      ]", 1)
         LCD.updateLCDScreenLine("*", 1, 10)
-        counter = 1
+        keypressCounter = 1
     else:
         # Add pressed key
         userEntry = userEntry + str(key)
 
-        LCD.updateLCDScreenLine("*", 1, (10 + counter))
-        counter += 1
-
-# Redis server configuration
-redisServer = redis.Redis(host='piserver', port=6379, db=0)
-
-# Backlight timer
-backlightTimer = 10
+        LCD.updateLCDScreenLine("*", 1, (10 + keypressCounter))
+        keypressCounter += 1
 
 def backlightCountdown():
     global backlightTimer
@@ -157,16 +154,14 @@ def backlightCountdown():
             backlightTimer = backlightTimer - 1
             time.sleep(1)
 
-        mylcd.backlight(0)
-
+        if (backlightTimer == 0):
+            mylcd.backlight(0)
 
 def controlPanel():
-    os.system('clear')
-
     # Keypad configuration
     factory = rpi_gpio.KeypadFactory()
     keypad = factory.create_keypad(keypad=KEYPAD, row_pins=ROW_PINS, col_pins=COL_PINS)
-    keypad.registerKeyPressHandler(print_key)
+    keypad.registerKeyPressHandler(keyPress)
 
     # Set the LCD to the default display
     LCD.updateLCDScreen("Passcode:[      ]", 1)
@@ -204,7 +199,6 @@ try:
         time.sleep(2)
 
 except KeyboardInterrupt:
-
     mylcd.lcd_clear()
     mylcd.backlight(0)
     GPIO.cleanup()
