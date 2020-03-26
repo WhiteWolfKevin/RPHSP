@@ -37,8 +37,8 @@ userEntry = ""
 # Redis server configuration
 redisServer = redis.Redis(host='piserver', port=6379, db=0)
 
-# Create timer variable for the backlight timer
-backlightTimer = 10
+# Variable to hold the duration of the backlight timer
+backlightTimerDuration = 30
 
 # Configure the pins for LED feedback and turn them off to start
 GPIO.setmode(GPIO.BCM)
@@ -78,7 +78,7 @@ def keyPress(key):
 
     # Reset backlight timer
     global backlightTimer
-    backlightTimer = 10
+    backlightTimer = backlightTimerDuration
     mylcd.backlight(1)
 
     # Grab the global keypressCounter variable to display code entry correctly
@@ -186,6 +186,10 @@ def controlPanel():
 
 # Main Function
 try:
+
+    # Initialize the backlight timer variable with the duration setting
+    backlightTimer = backlightTimerDuration
+
     controlPanelRunning = threading.Thread(target=controlPanel)
     controlPanelRunning.daemon = True
     controlPanelRunning.start()
