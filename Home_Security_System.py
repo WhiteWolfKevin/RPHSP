@@ -63,8 +63,10 @@ def securitySystem():
                 # This means the door/window is open
                 securityBreach = True
                 print(sensor.name + " Status: OPEN - WARNING!!!")
+                redisServer.set(sensor.name, "OPEN - WARNING!!!")
             else:
                 print(sensor.name + " Status: CLOSED")
+                redisServer.set(sensor.name, "CLOSED")
 
         if (securityBreach and alarmStatus == "Armed"):
             if (not pygame.mixer.music.get_busy()):

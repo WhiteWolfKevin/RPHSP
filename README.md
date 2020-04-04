@@ -7,6 +7,10 @@ Requirements
 3. pip install redis
 
 
+Camera Stuff
+============
+RTSP URL: rtsp://192.168.1.169:554/1/h264major
+
 
 Keypad Configuration
 =====================
