@@ -35,7 +35,7 @@
   if($redis->get("Front Door") == "CLOSED") {
     echo "Front Door: " . "<div id='statusBoxClosed'>" . $redis->get("Front Door") . "</div>";
     echo "<br>";
-  } else if ($redis->get("Basement Door") == "OPEN - WARNING!!!") {
+  } else if ($redis->get("Front Door") == "OPEN - WARNING!!!") {
     echo "Front Door: " . "<div id='statusBoxOpen'>" . $redis->get("Front Door") . "</div>";
     echo "<br>";
   }
@@ -43,7 +43,7 @@
   if($redis->get("Garage Door") == "CLOSED") {
     echo "Garage Door: " . "<div id='statusBoxClosed'>" . $redis->get("Garage Door") . "</div>";
     echo "<br>";
-  } else if ($redis->get("Basement Door") == "OPEN - WARNING!!!") {
+  } else if ($redis->get("Garage Door") == "OPEN - WARNING!!!") {
     echo "Garage Door: " . "<div id='statusBoxOpen'>" . $redis->get("Garage Door") . "</div>";
     echo "<br>";
   }
@@ -51,7 +51,7 @@
   if($redis->get("Living Room Window") == "CLOSED") {
     echo "Living Room Window: " . "<div id='statusBoxClosed'>" . $redis->get("Living Room Window") . "</div>";
     echo "<br>";
-  } else if ($redis->get("Basement Door") == "OPEN - WARNING!!!") {
+  } else if ($redis->get("Living Room Window") == "OPEN - WARNING!!!") {
     echo "Living Room Window: " . "<div id='statusBoxOpen'>" . $redis->get("Living Room Window") . "</div>";
     echo "<br>";
   }
