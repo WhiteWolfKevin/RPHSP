@@ -14,8 +14,6 @@
 
 <h1>Raspberry Pi Home Security System</h1>
 
-
-
 <?php
 
   $redis = new Redis();
@@ -23,6 +21,8 @@
   $redis->connect('piserver', 6379);
 
   echo "<h2>Alarm Status: " . $redis->get("alarmStatus") . "</h2>";
+
+  echo "Statically Created Content";
 
   if($redis->get("Basement Door") == "CLOSED") {
     echo "Basement Door: " . "<div id='statusBoxClosed'>" . $redis->get("Basement Door") . "</div>";
@@ -55,6 +55,16 @@
     echo "Living Room Window: " . "<div id='statusBoxOpen'>" . $redis->get("Living Room Window") . "</div>";
     echo "<br>";
   }
+
+  echo "Content from MariaDB";
+
+
+
+
+
+
+
+
 
 ?>
 
