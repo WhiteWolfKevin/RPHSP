@@ -7,6 +7,15 @@ Requirements
 3. pip install redis
 
 
+Database Configuration
+======================
+Network Access: Add "bind_address=192.168.1.250" and "[mysqld] bind_address=192.168.1.250" to /etc/mysql/mariadb.cnf
+create database rphsp;
+create table sensors( gpio_pin int(2) primary key, name varchar(30), type varchar(30));
+create user 'rphsp'@'192.168.1.0/255.255.255.0';
+GRANT ALL PRIVILEGES ON rphsp.* TO 'rphsp'@'192.168.1.0/255.255.255.0;
+
+
 Camera Stuff
 ============
 RTSP URL: rtsp://192.168.1.169:554/1/h264major
@@ -27,6 +36,7 @@ ROW [15, 22, 27, 13]
 
 * To adjust the key delay, go to this file and edit the "DEFAULT_KEY_DELAY" value
 * Default value is 300
+* A good value to set 150
 /home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
 
 
