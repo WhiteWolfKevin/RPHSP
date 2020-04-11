@@ -4,9 +4,15 @@
 <style>
 #statusBoxClosed {
   background-color: #cfc ;
+  display: inline-block;
 }
 #statusBoxOpen {
   background-color: #ff0000 ;
+  display: inline-block;
+}
+#statusBoxUnknown {
+  background-color: #ff8000 ;
+  display: inline-block;
 }
 </style>
 </head>
@@ -16,66 +22,13 @@
 
 <?php
 
-  $redis = new Redis();
-  //Connecting to Redis
-  $redis->connect('piserver', 6379);
-
-  echo "<h2>Alarm Status: " . $redis->get("alarmStatus") . "</h2>";
-
-  echo "Statically Created Content";
-  echo "<br>";
-
-  if($redis->get("Basement Door") == "CLOSED") {
-    echo "Basement Door: " . "<div id='statusBoxClosed'>" . $redis->get("Basement Door") . "</div>";
-    echo "<br>";
-  } else if ($redis->get("Basement Door") == "OPEN - WARNING!!!") {
-    echo "Basement Door: " . "<div id='statusBoxOpen'>" . $redis->get("Basement Door") . "</div>";
-    echo "<br>";
-  }
-
-  if($redis->get("Front Door") == "CLOSED") {
-    echo "Front Door: " . "<div id='statusBoxClosed'>" . $redis->get("Front Door") . "</div>";
-    echo "<br>";
-  } else if ($redis->get("Front Door") == "OPEN - WARNING!!!") {
-    echo "Front Door: " . "<div id='statusBoxOpen'>" . $redis->get("Front Door") . "</div>";
-    echo "<br>";
-  }
-
-  if($redis->get("Garage Door") == "CLOSED") {
-    echo "Garage Door: " . "<div id='statusBoxClosed'>" . $redis->get("Garage Door") . "</div>";
-    echo "<br>";
-  } else if ($redis->get("Garage Door") == "OPEN - WARNING!!!") {
-    echo "Garage Door: " . "<div id='statusBoxOpen'>" . $redis->get("Garage Door") . "</div>";
-    echo "<br>";
-  }
-
-  if($redis->get("Living Room Window") == "CLOSED") {
-    echo "Living Room Window: " . "<div id='statusBoxClosed'>" . $redis->get("Living Room Window") . "</div>";
-    echo "<br>";
-  } else if ($redis->get("Living Room Window") == "OPEN - WARNING!!!") {
-    echo "Living Room Window: " . "<div id='statusBoxOpen'>" . $redis->get("Living Room Window") . "</div>";
-    echo "<br>";
-  }
-
-
-  echo "Content from MariaDB";
-  echo "<br>";
-
   $servername = "piserver.lan";
   $username = "rphsp";
   $password = "password";
   $database = "rphsp";
 
   // Create connection
-  //$conn = new mysqli($servername, $username);
   $conn = new mysqli($servername, $username, $password, $database);
-
-  // Check connection
-  if ($conn->connect_error) {
-      die("Connection failed: " . $conn->connect_error);
-  }
-  echo "Connected successfully";
-  echo "<br>";
 
   $sql = "SELECT * from sensors";
   $result = $conn->query($sql);
@@ -86,13 +39,17 @@
       echo "Name: " . $row["name"] . "<br>";
       echo "Type: " . $row["type"] . "<br>";
       echo "GPIO Pin: " . $row["gpio_pin"] . "<br>";
+      echo "Status: ";
 
       if($row["status"] == "CLOSED") {
-        echo "Status: " . "<div id='statusBoxClosed'>" . $row["status"] . "</div>";
+        echo "<div id='statusBoxClosed'>" . $row["status"] . "</div>";
       } else if ($row["status"] == "OPEN") {
-        echo "Status: " . "<div id='statusBoxOpen'>" . $row["status"] . "</div>";
+        echo "<div id='statusBoxOpen'>" . $row["status"] . "</div>";
+      } else {
+        echo "<div id='statusBoxUnknown'>" . $row["status"] . "</div>";
       }
 
+      echo "<br>";
       echo "<br>";
     }
   } else {

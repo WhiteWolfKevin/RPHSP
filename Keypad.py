@@ -33,7 +33,7 @@ keypressCounter = 0
 userEntry = ""
 
 # MariaDB server configuration
-mariadb_connection = mariadb.connect(host='piserver', user='rphsp', database='rphsp')
+mariadb_connection = mariadb.connect(host='piserver', user='rphsp', password='password', database='rphsp')
 
 # Variable to hold the duration of the backlight timer
 backlightTimerDuration = 30
