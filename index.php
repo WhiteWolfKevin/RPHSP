@@ -23,6 +23,7 @@
   echo "<h2>Alarm Status: " . $redis->get("alarmStatus") . "</h2>";
 
   echo "Statically Created Content";
+  echo "<br>";
 
   if($redis->get("Basement Door") == "CLOSED") {
     echo "Basement Door: " . "<div id='statusBoxClosed'>" . $redis->get("Basement Door") . "</div>";
@@ -56,16 +57,47 @@
     echo "<br>";
   }
 
+
   echo "Content from MariaDB";
+  echo "<br>";
+
+  $servername = "piserver.lan";
+  $username = "rphsp";
+  $database = "rphsp";
+
+  // Create connection
+  //$conn = new mysqli($servername, $username);
+  $conn = new mysqli($servername, $username, $database);
+
+  // Check connection
+  if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+  }
+  echo "Connected successfully";
+  echo "<br>";
+
+  $sql = "SELECT * from sensors";
+  $result = $conn->query($sql);
+
+  if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+      echo "Name: " . $row["name"] . "<br>";
+      echo "Type: " . $row["type"] . "<br>";
+      echo "GPIO Pin: " . $row["gpio_pin"] . "<br>";
+      echo "Status: " . $row["status"] . "<br>";
+      echo "<br>";
+    }
+  } else {
+      echo "0 results";
+  }
 
 
 
 
 
 
-
-
-
+  $conn->close();
 ?>
 
 </body>
