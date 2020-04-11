@@ -21,7 +21,7 @@ class magneticSensor:
         self.previousStatus = previousStatus
 
 # MariaDB server configuration
-mariadb_connection = mariadb.connect(host='piserver', user='rphsp', database='rphsp')
+mariadb_connection = mariadb.connect(host='piserver', user='rphsp', password='password', database='rphsp')
 database = mariadb_connection.cursor()
 
 database.execute("select gpio_pin, status from sensors")

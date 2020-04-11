@@ -63,11 +63,12 @@
 
   $servername = "piserver.lan";
   $username = "rphsp";
+  $password = "password";
   $database = "rphsp";
 
   // Create connection
   //$conn = new mysqli($servername, $username);
-  $conn = new mysqli($servername, $username, $database);
+  $conn = new mysqli($servername, $username, $password, $database);
 
   // Check connection
   if ($conn->connect_error) {
@@ -85,17 +86,18 @@
       echo "Name: " . $row["name"] . "<br>";
       echo "Type: " . $row["type"] . "<br>";
       echo "GPIO Pin: " . $row["gpio_pin"] . "<br>";
-      echo "Status: " . $row["status"] . "<br>";
+
+      if($row["status"] == "CLOSED") {
+        echo "Status: " . "<div id='statusBoxClosed'>" . $row["status"] . "</div>";
+      } else if ($row["status"] == "OPEN") {
+        echo "Status: " . "<div id='statusBoxOpen'>" . $row["status"] . "</div>";
+      }
+
       echo "<br>";
     }
   } else {
       echo "0 results";
   }
-
-
-
-
-
 
   $conn->close();
 ?>

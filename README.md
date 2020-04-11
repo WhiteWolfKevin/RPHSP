@@ -14,7 +14,7 @@ create database rphsp;
 create table sensors( gpio_pin int(2) primary key, name varchar(30), type varchar(30));
 create table alarms( id int(2) primary key, name varchar(30), status varchar(15));
 create user 'rphsp'@'192.168.1.0/255.255.255.0';
-grant all privileges on rphsp.* TO 'rphsp'@'192.168.1.0/255.255.255.0;
+grant all privileges on rphsp.* TO 'rphsp'@'192.168.1.0/255.255.255.0';
 
 
 Camera Stuff
