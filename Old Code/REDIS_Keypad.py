@@ -5,7 +5,9 @@ import RPi.GPIO as GPIO
 import os
 import time
 import threading
-import mysql.connector as mariadb
+
+# Import for Redis
+import redis
 
 # Imports for LCD Screen
 import i2c_driver
@@ -32,8 +34,8 @@ COL_PINS = [18, 14, 17]
 keypressCounter = 0
 userEntry = ""
 
-# MariaDB server configuration
-mariadb_connection = mariadb.connect(host='piserver', user='rphsp', database='rphsp')
+# Redis server configuration
+redisServer = redis.Redis(host='piserver', port=6379, db=0)
 
 # Variable to hold the duration of the backlight timer
 backlightTimerDuration = 30
@@ -98,20 +100,12 @@ def keyPress(key):
                 time.sleep(1)
                 LCD.updateLCDScreen("                    ", 2)
 
-                # Get the alarm status from MariaDB
-                database = mariadb_connection.cursor()
-                database.execute("select status from alarms where id = 1")
-                result = database.fetchone()
-                alarmStatus = result[0]
-
-                if (alarmStatus == "ARMED"):
-                    database.execute("update alarms set status = 'DISARMED' where id = 1")
-                elif (alarmStatus == "DISARMED"):
-                    database.execute("update alarms set status = 'ARMED' where id = 1")
+                if (redisServer.get("alarmStatus") == "Armed"):
+                    redisServer.set("alarmStatus", "Disarmed")
+                elif (redisServer.get("alarmStatus") == "Disarmed"):
+                    redisServer.set("alarmStatus", "Armed")
                 else:
-                    database.execute("update alarms set status = 'DISARMED' where id = 1")
-                mariadb_connection.commit()
-                database.close()
+                    redisServer.set("alarmStatus", "Disarmed")
 
                 # Break out of the for loop
                 keyNotFound = False
@@ -175,14 +169,10 @@ def controlPanel():
 
     previousAlarmStatus = ""
 
-    database = mariadb_connection.cursor()
     while True:
 
-        # Get the alarm status from MariaDB
-        database.execute("select status from alarms where id = 1")
-        result = database.fetchone()
-        alarmStatus = result[0]
-        print("Alarm Status: " +  alarmStatus)
+        alarmStatus = redisServer.get("alarmStatus")
+        print("Alarm Status: " +  str(alarmStatus))
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus

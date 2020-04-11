@@ -14,19 +14,22 @@ alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
 
+# Door Sensor class
+class magneticSensor:
+    def __init__(self, gpioPin, previousStatus):
+        self.gpioPin = gpioPin
+        self.previousStatus = previousStatus
+
 # MariaDB server configuration
 mariadb_connection = mariadb.connect(host='piserver', user='rphsp', database='rphsp')
 database = mariadb_connection.cursor()
 
-database.execute("select gpio_pin from sensors")
+database.execute("select gpio_pin, status from sensors")
 
 sensors = []
-for gpio_pin in database:
-    sensors.append(gpio_pin[0])
-
-for sensor in sensors:
-    print(sensor)
-    GPIO.setup(sensor, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+for item in database:
+    sensors.append(magneticSensor(item[0], item[1]))
+    GPIO.setup(item[0], GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 # Audio player settings
 pygame.mixer.init()
@@ -37,24 +40,32 @@ def securitySystem():
 
     while True:
 
-        # Grab Alarm Status from Redis server
-        alarmStatus = "Armed"
+        # Grab Alarm Status from MariaDB server
+        database.execute("select status from alarms where id = 1")
+        result = database.fetchone()
+        alarmStatus = result[0]
+        print("alarmStatus = " + alarmStatus)
 
         # Variables
         securityBreach = False
 
-        # Print alarm status
-        print(alarmStatus)
-
         # Check each sensor for a security breach
         for sensor in sensors:
-            currentState = GPIO.input(sensor)
-            if (currentState):
-                # This means the door/window is open
+            if (GPIO.input(sensor.gpioPin)):
+                # Door/Window is open
                 securityBreach = True
-                print(str(sensor) + " Status: OPEN - WARNING!!!")
+                if (sensor.previousStatus != "OPEN"):
+                    database.execute("update sensors set status = 'OPEN' where gpio_pin = " + str(sensor.gpioPin))
+                    mariadb_connection.commit()
+                    sensor.previousStatus = "OPEN"
+                print(str(sensor.gpioPin) + " Status: OPEN - WARNING!!!")
             else:
-                print(str(sensor) + " Status: CLOSED")
+                # Door/Window is closed
+                if (sensor.previousStatus != "CLOSED"):
+                    database.execute("update sensors set status = 'CLOSED' where gpio_pin = " + str(sensor.gpioPin))
+                    mariadb_connection.commit()
+                    sensor.previousStatus = "CLOSED"
+                print(str(sensor.gpioPin) + " Status: CLOSED")
 
         if (securityBreach and alarmStatus == "Armed"):
             if (not pygame.mixer.music.get_busy()):
@@ -65,20 +76,18 @@ def securitySystem():
                 pygame.mixer.music.stop()
 
         # Time delay
-        time.sleep(2)
+        time.sleep(1)
         os.system('clear')
 
 # Main Function
 try:
-
     securitySystemRunning = threading.Thread(target=securitySystem)
     securitySystemRunning.daemon = True
     securitySystemRunning.start()
 
     while True:
         # Keep Running Application
-        print("Starting sleep...")
-        time.sleep(2)
+        time.sleep(1)
 
 except KeyboardInterrupt:
     GPIO.cleanup()

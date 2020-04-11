@@ -12,8 +12,9 @@ Database Configuration
 Network Access: Add "bind_address=192.168.1.250" and "[mysqld] bind_address=192.168.1.250" to /etc/mysql/mariadb.cnf
 create database rphsp;
 create table sensors( gpio_pin int(2) primary key, name varchar(30), type varchar(30));
+create table alarms( id int(2) primary key, name varchar(30), status varchar(15));
 create user 'rphsp'@'192.168.1.0/255.255.255.0';
-GRANT ALL PRIVILEGES ON rphsp.* TO 'rphsp'@'192.168.1.0/255.255.255.0;
+grant all privileges on rphsp.* TO 'rphsp'@'192.168.1.0/255.255.255.0;
 
 
 Camera Stuff
@@ -38,7 +39,6 @@ ROW [15, 22, 27, 13]
 * Default value is 300
 * A good value to set 150
 /home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
-
 
 
 Dependencies
