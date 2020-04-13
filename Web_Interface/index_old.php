@@ -15,12 +15,35 @@
   display: inline-block;
 }
 </style>
+
+<script type="text/javascript">
+  function loadDoc() {
+    setInterval(function(){
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+         document.getElementById("liveUpdate").innerHTML = this.responseText;
+        }
+      };
+      xhttp.open("GET", "data.php", true);
+      xhttp.send();
+    },1000);
+  }
+  loaddoc();
+</script>
+
 </head>
 <body>
 
 <h1>Raspberry Pi Home Security System</h1>
 
 <?php
+
+  ?>
+  <h1><class="testliveupdate" id="liveUpdate">5</h1>
+  <?php
+
+
 
   $servername = "piserver.lan";
   $username = "rphsp";
@@ -41,13 +64,17 @@
       echo "GPIO Pin: " . $row["gpio_pin"] . "<br>";
       echo "Status: ";
 
-      if($row["status"] == "CLOSED") {
-        echo "<div id='statusBoxClosed'>" . $row["status"] . "</div>";
-      } else if ($row["status"] == "OPEN") {
-        echo "<div id='statusBoxOpen'>" . $row["status"] . "</div>";
-      } else {
-        echo "<div id='statusBoxUnknown'>" . $row["status"] . "</div>";
-      }
+      ?>
+      <class="testliveupdate" id="liveUpdate">
+      <?php
+
+      // if($row["status"] == "CLOSED") {
+      //   echo "<div id='statusBoxClosed'>" . $row["status"] . "</div>";
+      // } else if ($row["status"] == "OPEN") {
+      //   echo "<div id='statusBoxOpen'>" . $row["status"] . "</div>";
+      // } else {
+      //   echo "<div id='statusBoxUnknown'>" . $row["status"] . "</div>";
+      // }
 
       echo "<br>";
       echo "<br>";

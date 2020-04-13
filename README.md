@@ -16,6 +16,11 @@ create table alarms( id int(2) primary key, name varchar(30), status varchar(15)
 create user 'rphsp'@'192.168.1.0/255.255.255.0';
 grant all privileges on rphsp.* TO 'rphsp'@'192.168.1.0/255.255.255.0';
 
+insert into sensors (gpio_pin, name, type) values (16, "Front Door", "Door");
+insert into sensors (gpio_pin, name, type) values (20, "Garage Door", "Door");
+insert into sensors (gpio_pin, name, type) values (21, "Basement Door", "Door");
+insert into sensors (gpio_pin, name, type) values (26, "Living Room Window", "Window");
+
 
 Camera Stuff
 ============
