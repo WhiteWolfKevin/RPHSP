@@ -20,7 +20,7 @@ while True:
 
 		(error, uid) = reader.anticoll()
 		if not error:
-			print("UID: " + str(uid))
+			print("UID in Decimal: " + str(uid))
 			# Select Tag is required before Auth
 			if not reader.select_tag(uid):
 				# Auth for block 10 (block 2 of sector 2) using default shipping key A

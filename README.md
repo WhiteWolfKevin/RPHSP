@@ -53,6 +53,10 @@ sudo apt-get install python-smbus
 i2cdetect -y 1
 
 
+RFID MFRC522 Info
+=================
+https://github.com/ondryaso/pi-rc522
+
 Tutorial
 ============
 https://howchoo.com/g/zwq2zwixotu/how-to-make-a-raspberry-pi-smart-alarm-clock
