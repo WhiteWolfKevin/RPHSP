@@ -6,7 +6,7 @@ Requirements
 2. pip install pad4pi
 3. pip install redis
 
-
+======================
 Database Configuration
 ======================
 Network Access: Add "bind_address=192.168.1.250" and "[mysqld] bind_address=192.168.1.250" to /etc/mysql/mariadb.cnf
@@ -21,12 +21,41 @@ insert into sensors (gpio_pin, name, type) values (20, "Garage Door", "Door");
 insert into sensors (gpio_pin, name, type) values (21, "Basement Door", "Door");
 insert into sensors (gpio_pin, name, type) values (26, "Living Room Window", "Window");
 
+CREATE TABLE user_information (
+     user_id int(4) AUTO_INCREMENT,
+     first_name varchar(30) NOT NULL,
+     last_name varchar(30) NOT NULL,
+     date_added datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     enabled bool NOT NULL DEFAULT 1,
+     PRIMARY KEY (user_id)
+);
 
+CREATE TABLE rfid_cards (
+     card_number char(10),
+     user_id int(4),
+     PRIMARY KEY (card_number),
+     FOREIGN KEY (user_id) REFERENCES user_information(user_id)
+);
+
+CREATE TABLE pin_codes (
+     pin_code int(6),
+     user_id int(4),
+     PRIMARY KEY (pin_code),
+     FOREIGN KEY (user_id) REFERENCES user_information(user_id)
+);
+
+
+INSERT INTO user_information (first_name, last_name) values ("Kevin", "Tate");
+INSERT INTO rfid_cards values ("4a1a560f09", 1);
+INSERT INTO pin_codes values (111111, 1);
+
+======================
 Camera Stuff
-============
+======================
 RTSP URL: rtsp://192.168.1.169:554/1/h264major
 
 
+======================
 Keypad Configuration
 =====================
 GPIO Pin Numbers
@@ -46,6 +75,7 @@ ROW [15, 22, 27, 13]
 /home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
 
 
+======================
 Dependencies
 ============
 sudo apt-get install i2c-tools
@@ -53,14 +83,17 @@ sudo apt-get install python-smbus
 i2cdetect -y 1
 
 
+======================
 RFID MFRC522 Info
 =================
 https://github.com/ondryaso/pi-rc522
 
+======================
 Tutorial
 ============
 https://howchoo.com/g/zwq2zwixotu/how-to-make-a-raspberry-pi-smart-alarm-clock
 
+======================
 PHP Redis Admin
 ===============
 https://github.com/erikdubbelboer/phpRedisAdmin

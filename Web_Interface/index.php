@@ -23,13 +23,11 @@
 
      <?php
 
-     $servername = "piserver.lan";
-     $username = "rphsp";
-     $password = "password";
-     $database = "rphsp";
+     // Include database connection
+     include "database_connection.php";
 
-     // Create connection
-     $conn = new mysqli($servername, $username, $password, $database);
+     // Connect to the database
+     $conn = OpenDatabase();
 
      $sql = "SELECT * from sensors";
      $result = $conn->query($sql);

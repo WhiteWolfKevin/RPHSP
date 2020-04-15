@@ -41,6 +41,15 @@ try:
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
+                if (uidInString == "4a1a560f09"):
+                    print("This card belongs to Kevin")
+                elif (uidInString == "5a82d2212b"):
+                    print("This card belongs to Scrap")
+                elif (uidInString == "5a50bf2194"):
+                    print("This card belongs to Abby")
+                else:
+                    print("Unknown Card")
+
                 # We must stop crypto
                 util.deauth()
                 print("")

@@ -1,14 +1,12 @@
 <?php
 
      $gpio_pin = $_GET["gpio_pin"];
+     
+     // Include database connection
+     include "database_connection.php";
 
-     $servername = "piserver.lan";
-     $username = "rphsp";
-     $password = "password";
-     $database = "rphsp";
-
-     // Create connection
-     $conn = new mysqli($servername, $username, $password, $database);
+     // Connect to the database
+     $conn = OpenDatabase();
 
      $sql = "SELECT status from sensors where gpio_pin = $gpio_pin";
      $result = $conn->query($sql);
