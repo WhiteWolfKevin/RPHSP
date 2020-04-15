@@ -5,6 +5,7 @@ import signal
 import time
 import RPi.GPIO as GPIO
 import os
+import requests
 
 rdr = RFID()
 util = rdr.util()
@@ -41,14 +42,9 @@ try:
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                if (uidInString == "4a1a560f09"):
-                    print("This card belongs to Kevin")
-                elif (uidInString == "5a82d2212b"):
-                    print("This card belongs to Scrap")
-                elif (uidInString == "5a50bf2194"):
-                    print("This card belongs to Abby")
-                else:
-                    print("Unknown Card")
+                req = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString)
+
+                print(req.content)
 
                 # We must stop crypto
                 util.deauth()
