@@ -162,6 +162,10 @@ def backlightCountdown():
 
         if (backlightTimer == 0):
             mylcd.backlight(0)
+            backlightTimer = -1
+
+        if (backlightTimer == -1):
+            time.sleep(1)
 
 def controlPanel():
     # Keypad configuration
