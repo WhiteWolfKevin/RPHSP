@@ -5,7 +5,6 @@ import RPi.GPIO as GPIO
 import os
 import time
 import threading
-import mysql.connector as mariadb
 
 # Imports for LCD Screen
 import i2c_driver
@@ -35,9 +34,6 @@ ROW_PINS = [15, 22, 27, 13]
 COL_PINS = [18, 14, 17]
 keypressCounter = 0
 userEntry = ""
-
-# MariaDB server configuration
-mariadb_connection = mariadb.connect(host='piserver', user='rphsp', password='password', database='rphsp')
 
 # Variable to hold the duration of the backlight timer
 backlightTimerDuration = 30
@@ -75,6 +71,27 @@ def accessDeniedLED():
     time.sleep(1)
     GPIO.output(6,0)
 
+# Function for error LED feedback
+def errorLED():
+    GPIO.output(6,1)
+    time.sleep(0.2)
+    GPIO.output(6,0)
+    GPIO.output(12,1)
+    time.sleep(0.2)
+    GPIO.output(12,0)
+    GPIO.output(6,1)
+    time.sleep(0.2)
+    GPIO.output(6,0)
+    GPIO.output(12,1)
+    time.sleep(0.2)
+    GPIO.output(12,0)
+    GPIO.output(6,1)
+    time.sleep(0.2)
+    GPIO.output(6,0)
+    GPIO.output(12,1)
+    time.sleep(0.2)
+    GPIO.output(12,0)
+
 # Function to handle keypad presses
 def keyPress(key):
 
@@ -89,44 +106,28 @@ def keyPress(key):
     # Grab the global string variable to hold the entered key
     global userEntry
 
-    # Correct Keycode
-    correctKeys = ["123456", "111111", "999999"]
-
     # Do stuff depending on what key was pressed
     if (key == "#"):
 
-        for correctKey in correctKeys:
-            if (userEntry == correctKey):
-                LCD.updateLCDScreen("Passcode Correct!", 2)
-                accessGrantedLED()
-                time.sleep(1)
-                LCD.updateLCDScreen("                    ", 2)
+        result = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?pin_code=" + userEntry).content
 
-                # Get the alarm status from MariaDB
-                database = mariadb_connection.cursor()
-                database.execute("select status from alarms where id = 1")
-                result = database.fetchone()
-                alarmStatus = result[0]
-
-                if (alarmStatus == "ARMED"):
-                    database.execute("update alarms set status = 'DISARMED' where id = 1")
-                elif (alarmStatus == "DISARMED"):
-                    database.execute("update alarms set status = 'ARMED' where id = 1")
-                else:
-                    database.execute("update alarms set status = 'DISARMED' where id = 1")
-                mariadb_connection.commit()
-                database.close()
-
-                # Break out of the for loop
-                keyNotFound = False
-                break
-
-            else:
-                keyNotFound = True
-
-        if (keyNotFound):
-            LCD.updateLCDScreen("Incorrect Passcode!", 2)
+        # Added the empty userEntry check as a quick test of error LEDs
+        if (userEntry == ""):
+            errorLED()
+            time.sleep(1)
+        elif (result == "Access Granted"):
+            LCD.updateLCDScreen(result, 2)
+            accessGrantedLED()
+            time.sleep(1)
+            LCD.updateLCDScreen("                    ", 2)
+        elif (result == "Access Denied"):
+            LCD.updateLCDScreen(result, 2)
             accessDeniedLED()
+            time.sleep(1)
+            LCD.updateLCDScreen("                    ", 2)
+        else:
+            LCD.updateLCDScreen(result, 2)
+            errorLED()
             time.sleep(1)
             LCD.updateLCDScreen("                    ", 2)
 
@@ -183,23 +184,19 @@ def controlPanel():
 
     previousAlarmStatus = ""
 
-    database = mariadb_connection.cursor()
-    while True:
+    global backlightTimer
 
-        # Get the alarm status from MariaDB
-        database.execute("select status from alarms where id = 1")
-        result = database.fetchone()
-        alarmStatus = result[0]
-        print("Alarm Status: " +  alarmStatus)
+    while True:
+        alarmStatus = requests.get("http://192.168.1.125/webinterface/alarm_status.php").content
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
             LCD.updateLCDScreen("                    ", 3)
             LCD.updateLCDScreen("Alarm: " + str(alarmStatus), 3)
+            backlightTimer = backlightTimerDuration
 
         time.sleep(1)
 
-        global backlightTimer
         print("Backlight Timer: " + str(backlightTimer))
 
 def rfidReader():
@@ -239,9 +236,23 @@ def rfidReader():
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                req = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString)
+                result = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString).content
 
-                print(req.content)
+                if (result == "Access Granted"):
+                    LCD.updateLCDScreen(result, 2)
+                    accessGrantedLED()
+                    time.sleep(1)
+                    LCD.updateLCDScreen("                    ", 2)
+                elif (result == "Access Denied"):
+                    LCD.updateLCDScreen(result, 2)
+                    accessDeniedLED()
+                    time.sleep(1)
+                    LCD.updateLCDScreen("                    ", 2)
+                else:
+                    LCD.updateLCDScreen(result, 2)
+                    errorLED()
+                    time.sleep(1)
+                    LCD.updateLCDScreen("                    ", 2)
 
                 # We must stop crypto
                 util.deauth()
