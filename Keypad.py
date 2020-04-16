@@ -13,6 +13,10 @@ import i2c_driver
 # Imports for Keypad
 from pad4pi import rpi_gpio
 
+# Imports for RFID
+from pirc522 import RFID
+import requests
+
 # Initialize LCD object, turn the LCD screen on, and create the LCD lock object
 mylcd = i2c_driver.LCD()
 mylcd.backlight(1)
@@ -198,6 +202,52 @@ def controlPanel():
         global backlightTimer
         print("Backlight Timer: " + str(backlightTimer))
 
+def rfidReader():
+    #rdr = RFID()s
+    rdr = RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
+    util = rdr.util()
+
+    # Set util debug to true - it will print what's going on
+    util.debug = True
+
+    while True:
+        # Wait for tag
+        rdr.wait_for_tag()
+
+        # Request tag
+        (error, data) = rdr.request()
+        if not error:
+            print("Detected")
+
+            (error, uid) = rdr.anticoll()
+            if not error:
+
+                # Reset backlight timer
+                global backlightTimer
+                backlightTimer = backlightTimerDuration
+                mylcd.backlight(1)
+
+                # Print UID
+                print("UID in Dec: " + str(uid))
+
+                uidInHex = []
+                uidInString = ""
+                for field in uid:
+                    uidInHex.append('%02x' % (field))
+                    uidInString += ('%02x' % (field))
+
+                print("UID in Hex: " + str(uidInHex))
+                print("UID in Str: " + uidInString)
+
+                req = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString)
+
+                print(req.content)
+
+                # We must stop crypto
+                util.deauth()
+                print("")
+        time.sleep(1)
+
 # Main Function
 try:
 
@@ -211,6 +261,10 @@ try:
     backlightCountdownRunning = threading.Thread(target=backlightCountdown)
     backlightCountdownRunning.daemon = True
     backlightCountdownRunning.start()
+
+    rfidReaderRunning = threading.Thread(target=rfidReader)
+    rfidReaderRunning.daemon = True
+    rfidReaderRunning.start()
 
     while True:
         # Keep Running Application

@@ -7,8 +7,11 @@ import RPi.GPIO as GPIO
 import os
 import requests
 
-rdr = RFID()
+#rdr = RFID()
+rdr = RFID(pin_rst=25, pin_irq=24, pin_mode=GPIO.BCM)
 util = rdr.util()
+
+
 
 # Set util debug to true - it will print what's going on
 util.debug = True
