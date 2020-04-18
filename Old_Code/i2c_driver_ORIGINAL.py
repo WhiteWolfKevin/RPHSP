@@ -83,7 +83,7 @@ class I2CDevice:
 
 
 class LCD:
-    def __init__(self, lock):
+    def __init__(self):
         """Initializes objects and the LCD"""
         self.lcd_device = I2CDevice(ADDRESS)
 
@@ -98,9 +98,6 @@ class LCD:
         self.lcd_write(LCD_CLEARDISPLAY)
         self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
         time.sleep(0.2)
-
-        # Set the lock for the RPHSP
-        self.lock = lock
 
     def lcd_strobe(self, data):
         """Clocks EN to latch command"""
@@ -145,16 +142,15 @@ class LCD:
         self.lcd_write(LCD_CLEARDISPLAY)
         self.lcd_write(LCD_RETURNHOME)
 
-    # REMOVED IN FAVOR OF BELOW backlight FUNCTION FOR RPHSP
-    # def backlight(self, state):
-    #     """define backlight on/off (lcd.backlight(1); off= lcd.backlight(0)
-    #
-    #     state: 1=on, 0=off
-    #     """
-    #     if state == 1:
-    #         self.lcd_device.write_cmd(LCD_BACKLIGHT)
-    #     elif state == 0:
-    #         self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
+    def backlight(self, state):
+        """define backlight on/off (lcd.backlight(1); off= lcd.backlight(0)
+
+        state: 1=on, 0=off
+        """
+        if state == 1:
+            self.lcd_device.write_cmd(LCD_BACKLIGHT)
+        elif state == 0:
+            self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
 
     def lcd_load_custom_chars(self, fontdata):
         """add custom characters (0 - 7)"""
@@ -178,27 +174,3 @@ class LCD:
 
         for char in string:
             self.lcd_write(ord(char), Rs)
-
-    # RPHSP Custom Functions
-    # Rewrite the entire given line with the given text
-    def updateLCDScreen(self, text, line):
-        self.lock.acquire()
-        self.lcd_display_string(text, line)
-        self.lock.release()
-
-    # Write the given text at the given position on the given line
-    def updateLCDScreenLine(self, text, line, position):
-        self.lock.acquire()
-        self.lcd_display_string_pos(text, line, position)
-        self.lock.release()
-
-    # Clear the LCD screen (Just a rename of the lcd_clear function above)
-    def clearLCDScreen(self):
-        self.lcd_clear()
-
-    # Control the backlight (An adjusted fucnction that allows for text input)
-    def backlight(self, status):
-        if (str(status).lower() == "on"):
-            self.lcd_device.write_cmd(LCD_BACKLIGHT)
-        elif (str(status).lower() == "off"):
-            self.lcd_device.write_cmd(LCD_NOBACKLIGHT)

@@ -16,11 +16,6 @@ from pad4pi import rpi_gpio
 from pirc522 import RFID
 import requests
 
-# Initialize LCD object, turn the LCD screen on, and create the LCD lock object
-mylcd = i2c_driver.LCD()
-mylcd.backlight(1)
-updateLCDLock = threading.Lock()
-
 # Configure Keypad Buttons
 KEYPAD = [
     [1, 2, 3],
@@ -44,20 +39,6 @@ GPIO.setup(6,GPIO.OUT)
 GPIO.setup(12,GPIO.OUT)
 GPIO.output(6,0)
 GPIO.output(12,0)
-
-# LCD class that contains functions to update the LCD screen
-class LCD():
-    @staticmethod
-    def updateLCDScreen(text, line):
-        updateLCDLock.acquire()
-        mylcd.lcd_display_string(text, line)
-        updateLCDLock.release()
-
-    @staticmethod
-    def updateLCDScreenLine(text, line, position):
-        updateLCDLock.acquire()
-        mylcd.lcd_display_string_pos(text, line, position)
-        updateLCDLock.release()
 
 # Function for access granted LED feedback
 def accessGrantedLED():
@@ -92,13 +73,30 @@ def errorLED():
     time.sleep(0.2)
     GPIO.output(12,0)
 
+def accessAttempt(result):
+    if (result == "Access Granted"):
+        lcd.updateLCDScreen(result, 2)
+        accessGrantedLED()
+        time.sleep(1)
+        lcd.updateLCDScreen("                    ", 2)
+    elif (result == "Access Denied"):
+        lcd.updateLCDScreen(result, 2)
+        accessDeniedLED()
+        time.sleep(1)
+        lcd.updateLCDScreen("                    ", 2)
+    else:
+        lcd.updateLCDScreen(result, 2)
+        errorLED()
+        time.sleep(1)
+        lcd.updateLCDScreen("                    ", 2)
+
 # Function to handle keypad presses
 def keyPress(key):
 
     # Reset backlight timer
     global backlightTimer
     backlightTimer = backlightTimerDuration
-    mylcd.backlight(1)
+    lcd.backlight("On")
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
@@ -115,31 +113,18 @@ def keyPress(key):
         if (userEntry == ""):
             errorLED()
             time.sleep(1)
-        elif (result == "Access Granted"):
-            LCD.updateLCDScreen(result, 2)
-            accessGrantedLED()
-            time.sleep(1)
-            LCD.updateLCDScreen("                    ", 2)
-        elif (result == "Access Denied"):
-            LCD.updateLCDScreen(result, 2)
-            accessDeniedLED()
-            time.sleep(1)
-            LCD.updateLCDScreen("                    ", 2)
         else:
-            LCD.updateLCDScreen(result, 2)
-            errorLED()
-            time.sleep(1)
-            LCD.updateLCDScreen("                    ", 2)
+            accessAttempt(result)
 
-        LCD.updateLCDScreen("Passcode:[      ]", 1)
+        lcd.updateLCDScreen("Passcode:[      ]", 1)
         keypressCounter = 0
 
         # Clear User Code
         userEntry = ""
 
     elif (key == "*"):
-        LCD.updateLCDScreen("Passcode:[      ]", 1)
-        LCD.updateLCDScreen("                    ", 2)
+        lcd.updateLCDScreen("Passcode:[      ]", 1)
+        lcd.updateLCDScreen("                    ", 2)
         keypressCounter = 0
 
         # Clear User Code
@@ -148,14 +133,14 @@ def keyPress(key):
         # Reset user code with pressed key
         userEntry = str(key)
 
-        LCD.updateLCDScreen("Passcode:[      ]", 1)
-        LCD.updateLCDScreenLine("*", 1, 10)
+        lcd.updateLCDScreen("Passcode:[      ]", 1)
+        lcd.updateLCDScreenLine("*", 1, 10)
         keypressCounter = 1
     else:
         # Add pressed key
         userEntry = userEntry + str(key)
 
-        LCD.updateLCDScreenLine("*", 1, (10 + keypressCounter))
+        lcd.updateLCDScreenLine("*", 1, (10 + keypressCounter))
         keypressCounter += 1
 
 def backlightCountdown():
@@ -166,7 +151,7 @@ def backlightCountdown():
             time.sleep(1)
 
         if (backlightTimer == 0):
-            mylcd.backlight(0)
+            lcd.backlight("Off")
             backlightTimer = -1
 
         if (backlightTimer == -1):
@@ -179,8 +164,8 @@ def controlPanel():
     keypad.registerKeyPressHandler(keyPress)
 
     # Set the LCD to the default display
-    LCD.updateLCDScreen("Passcode:[      ]", 1)
-    LCD.updateLCDScreen("Clear:*   Submit:#", 4)
+    lcd.updateLCDScreen("Passcode:[      ]", 1)
+    lcd.updateLCDScreen("Clear:*   Submit:#", 4)
 
     previousAlarmStatus = ""
 
@@ -191,8 +176,8 @@ def controlPanel():
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
-            LCD.updateLCDScreen("                    ", 3)
-            LCD.updateLCDScreen("Alarm: " + str(alarmStatus), 3)
+            lcd.updateLCDScreen("                    ", 3)
+            lcd.updateLCDScreen("Alarm: " + str(alarmStatus), 3)
             backlightTimer = backlightTimerDuration
 
         time.sleep(1)
@@ -222,7 +207,7 @@ def rfidReader():
                 # Reset backlight timer
                 global backlightTimer
                 backlightTimer = backlightTimerDuration
-                mylcd.backlight(1)
+                lcd.backlight("On")
 
                 # Print UID
                 print("UID in Dec: " + str(uid))
@@ -238,21 +223,7 @@ def rfidReader():
 
                 result = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString).content
 
-                if (result == "Access Granted"):
-                    LCD.updateLCDScreen(result, 2)
-                    accessGrantedLED()
-                    time.sleep(1)
-                    LCD.updateLCDScreen("                    ", 2)
-                elif (result == "Access Denied"):
-                    LCD.updateLCDScreen(result, 2)
-                    accessDeniedLED()
-                    time.sleep(1)
-                    LCD.updateLCDScreen("                    ", 2)
-                else:
-                    LCD.updateLCDScreen(result, 2)
-                    errorLED()
-                    time.sleep(1)
-                    LCD.updateLCDScreen("                    ", 2)
+                accessAttempt(result)
 
                 # We must stop crypto
                 util.deauth()
@@ -262,8 +233,13 @@ def rfidReader():
 # Main Function
 try:
 
-    # Initialize the backlight timer variable with the duration setting
+    # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
+    updateLCDLock = threading.Lock()
+
+    # Initialize LCD object, turn the LCD screen on, create the LCD lock object, and set the backlight timer
+    lcd = i2c_driver.LCD(updateLCDLock)
+    lcd.backlight("On")
 
     controlPanelRunning = threading.Thread(target=controlPanel)
     controlPanelRunning.daemon = True
@@ -282,6 +258,6 @@ try:
         time.sleep(2)
 
 except KeyboardInterrupt:
-    mylcd.lcd_clear()
-    mylcd.backlight(0)
+    lcd.lcd_clear()
+    lcd.backlight("Off")
     GPIO.cleanup()
