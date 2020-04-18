@@ -73,6 +73,7 @@ def errorLED():
     time.sleep(0.2)
     GPIO.output(12,0)
 
+# Function to handle if an access attempt was requested
 def accessAttempt(result):
     if (result == "Access Granted"):
         lcd.updateLCDScreen(result, 2)
@@ -89,6 +90,12 @@ def accessAttempt(result):
         errorLED()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
+
+def securitySystemRequest(url):
+    try:
+        return requests.get(url).content
+    except:
+        return "ERROR CONN..."
 
 # Function to handle keypad presses
 def keyPress(key):
@@ -107,7 +114,7 @@ def keyPress(key):
     # Do stuff depending on what key was pressed
     if (key == "#"):
 
-        result = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?pin_code=" + userEntry).content
+        result = securitySystemRequest("http://192.168.1.125/webinterface/keypad_auth.php?pin_code=" + userEntry)
 
         # Added the empty userEntry check as a quick test of error LEDs
         if (userEntry == ""):
@@ -172,7 +179,7 @@ def controlPanel():
     global backlightTimer
 
     while True:
-        alarmStatus = requests.get("http://192.168.1.125/webinterface/alarm_status.php").content
+        alarmStatus = securitySystemRequest("http://192.168.1.125/webinterface/alarm_status.php")
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
@@ -221,7 +228,7 @@ def rfidReader():
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                result = requests.get("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString).content
+                result = securitySystemRequest("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString)
 
                 accessAttempt(result)
 

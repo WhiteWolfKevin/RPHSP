@@ -15,7 +15,7 @@
           $row = $result->fetch_assoc();
           echo $row["status"];
      } else {
-          echo "!!ERROR!!";
+          echo "ERROR - WEB";
      }
      // Disconnect from the database
      CloseDatabase($conn);

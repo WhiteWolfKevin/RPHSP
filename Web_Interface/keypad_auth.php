@@ -3,8 +3,6 @@
      function access_Granted($conn) {
           echo "Access Granted";
 
-          $alarmStatus = "";
-
           // Get the current alarm status
           $sql = "SELECT status FROM alarms WHERE id = 1";
           $result = $conn->query($sql);
@@ -33,8 +31,6 @@
      function access_Denied() {
           echo "Access Denied";
      }
-
-
 
      // Get the possible variables that are sent in
      $pin_code = $_GET["pin_code"];
