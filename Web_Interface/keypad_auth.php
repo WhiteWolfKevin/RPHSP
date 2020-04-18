@@ -1,37 +1,5 @@
 <?php
 
-     function access_Granted($conn) {
-          echo "Access Granted";
-
-          // Get the current alarm status
-          $sql = "SELECT status FROM alarms WHERE id = 1";
-          $result = $conn->query($sql);
-
-          if ($result->num_rows > 0) {
-               // output data of each row
-               while($row = $result->fetch_assoc()) {
-                    if ($row["status"] == "ARMED") {
-                         $sql = "UPDATE alarms SET status = 'DISARMED' WHERE id = 1";
-                    } else if ($row["status"] == "DISARMED") {
-                         $sql = "UPDATE alarms SET status = 'ARMED' WHERE id = 1";
-                    } else {
-                         $sql = "UPDATE alarms SET status = 'DISARMED' WHERE id = 1";
-                    }
-               }
-
-               // Send the update to the database
-               $conn->query($sql);
-
-          }
-
-          // Disconnect from the database
-          CloseDatabase($conn);
-     }
-
-     function access_Denied() {
-          echo "Access Denied";
-     }
-
      // Get the possible variables that are sent in
      $pin_code = $_GET["pin_code"];
      $rfid_card_number = $_GET["rfid_card_number"];
@@ -60,9 +28,9 @@
                               exit();
                          }
                     }
-                    access_Denied();
+                    access_Denied($conn);
                } else {
-                    access_Denied();
+                    access_Denied($conn);
                }
           } else {
 
@@ -78,9 +46,9 @@
                               exit();
                          }
                     }
-                    access_Denied();
+                    access_Denied($conn);
                } else {
-                    access_Denied();
+                    access_Denied($conn);
                }
           }
 
@@ -88,8 +56,44 @@
           CloseDatabase($conn);
 
      } else {
-          // access_Denied();
-          echo "!!ERROR!!";
+          echo "ERROR - WEB";
+     }
+
+     // Access granted function
+     function access_Granted($conn) {
+          echo "Access Granted";
+
+          // Get the current alarm status
+          $sql = "SELECT status FROM alarms WHERE id = 1";
+          $result = $conn->query($sql);
+
+          if ($result->num_rows > 0) {
+               // output data of each row
+               while($row = $result->fetch_assoc()) {
+                    if ($row["status"] == "ARMED") {
+                         $sql = "UPDATE alarms SET status = 'DISARMED' WHERE id = 1";
+                    } else if ($row["status"] == "DISARMED") {
+                         $sql = "UPDATE alarms SET status = 'ARMED' WHERE id = 1";
+                    } else {
+                         $sql = "UPDATE alarms SET status = 'DISARMED' WHERE id = 1";
+                    }
+               }
+
+               // Send the update to the database
+               $conn->query($sql);
+
+          }
+
+          // Disconnect from the database
+          CloseDatabase($conn);
+     }
+
+     // Access denied function
+     function access_Denied($conn) {
+          echo "Access Denied";
+
+          // Disconnect from the database
+          CloseDatabase($conn);
      }
 
 ?>

@@ -16,6 +16,9 @@ from pad4pi import rpi_gpio
 from pirc522 import RFID
 import requests
 
+# Import to provide IP address to keypad_auth.php
+import netifaces as ni
+
 # Configure Keypad Buttons
 KEYPAD = [
     [1, 2, 3],
@@ -91,11 +94,19 @@ def accessAttempt(result):
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
 
+# Send a request to the web interface via a GET request
 def securitySystemRequest(url):
-    try:
-        return requests.get(url).content
+    try:   
+        return requests.get("http://192.168.1.125/webinterface/" + url).content
     except:
         return "ERROR CONN..."
+
+# Function to get the IP address of the keypad
+def keypadIPAddress():
+    try:
+        return "&keypad_ip_address=" + ni.ifaddresses('wlan0')[ni.AF_INET][0]['addr']
+    except:
+        return("IP UNAVL")
 
 # Function to handle keypad presses
 def keyPress(key):
@@ -114,7 +125,7 @@ def keyPress(key):
     # Do stuff depending on what key was pressed
     if (key == "#"):
 
-        result = securitySystemRequest("http://192.168.1.125/webinterface/keypad_auth.php?pin_code=" + userEntry)
+        result = securitySystemRequest("keypad_auth.php?pin_code=" + userEntry)
 
         # Added the empty userEntry check as a quick test of error LEDs
         if (userEntry == ""):
@@ -179,7 +190,7 @@ def controlPanel():
     global backlightTimer
 
     while True:
-        alarmStatus = securitySystemRequest("http://192.168.1.125/webinterface/alarm_status.php")
+        alarmStatus = securitySystemRequest("alarm_status.php")
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
@@ -228,7 +239,7 @@ def rfidReader():
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                result = securitySystemRequest("http://192.168.1.125/webinterface/keypad_auth.php?rfid_card_number=" + uidInString)
+                result = securitySystemRequest("keypad_auth.php?rfid_card_number=" + uidInString)
 
                 accessAttempt(result)
 
