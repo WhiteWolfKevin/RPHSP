@@ -4,6 +4,8 @@
      $pin_code = $_GET["pin_code"];
      $rfid_card_number = $_GET["rfid_card_number"];
 
+     $log_file = fopen('log.txt', 'a');
+
      # Contine if one of the items is set
      if (isset($pin_code) || isset($rfid_card_number)) {
 
@@ -15,6 +17,9 @@
 
           // Determine which authentication item is set and proceed accordingly
           if (isset($pin_code)) {
+
+               // Write to the log file
+               fwrite($log_file, date('Y-m-d H:i:s') . " : Pin $pin_code entered\n");
 
                // Get all of the pin codes from the database
                $sql = "SELECT pin_code from pin_codes";
@@ -34,6 +39,9 @@
                }
           } else {
 
+               // Write to the log file
+               fwrite($log_file, date('Y-m-d H:i:s') . " : RFID $rfid_card_number entered\n");
+
                // Get all of the card numbers from the database
                $sql = "SELECT card_number from rfid_cards";
                $result = $conn->query($sql);
@@ -51,10 +59,6 @@
                     access_Denied($conn);
                }
           }
-
-          // Disconnect from the database
-          CloseDatabase($conn);
-
      } else {
           echo "ERROR - WEB";
      }
@@ -95,5 +99,7 @@
           // Disconnect from the database
           CloseDatabase($conn);
      }
+
+     fclose($fp);
 
 ?>
