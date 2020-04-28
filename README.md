@@ -43,10 +43,31 @@ CREATE TABLE pin_codes (
      FOREIGN KEY (user_id) REFERENCES user_information(user_id)
 );
 
+CREATE TABLE relays (
+     relay_id int(4) AUTO_INCREMENT,
+     relay_name varchar(30) NOT NULL,
+     channels int (2) NOT NULL,
+     PRIMARY KEY (relay_id)
+);
+
+CREATE TABLE relay_pins (
+     relay_id int(4),
+     relay_pin int(2),
+     status char(3),
+     PRIMARY KEY (relay_id, relay_pin),
+     FOREIGN KEY (relay_id) REFERENCES relays(relay_id)
+);
+
 
 INSERT INTO user_information (first_name, last_name) values ("Kevin", "Tate");
 INSERT INTO rfid_cards values ("4a1a560f09", 1);
 INSERT INTO pin_codes values (111111, 1);
+
+INSERT INTO relays (relay_name, channels) values ("Test Relay", 4);
+INSERT INTO relay_pins values (1, 4, "Off");
+INSERT INTO relay_pins values (1, 17, "Off");
+INSERT INTO relay_pins values (1, 27, "Off");
+INSERT INTO relay_pins values (1, 22, "Off");
 
 ======================
 Camera Stuff

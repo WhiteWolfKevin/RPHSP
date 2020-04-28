@@ -14,6 +14,13 @@
           background-color: #ff8000 ;
           display: inline-block;
      }
+
+
+
+     table, th, td {
+          border: 1px solid black;
+     }
+
      </style>
 </head>
 
@@ -35,17 +42,30 @@
      // Array holding all sensors gpios for javascript
      $sensors = [];
 
+     echo "<table>";
+
      if ($result->num_rows > 0) {
           // Display each field
           while($row = $result->fetch_assoc()) {
-               echo "Name: " . $row["name"] . "<br>";
-               echo "Type: " . $row["type"] . "<br>";
-               echo "GPIO Pin: " . $row["gpio_pin"] . "<br>";
-               echo "Status: ";
-               echo "<div style='display: inline-block;' id='gpio_pin_" . $row["gpio_pin"] . "'></div>";
+               echo "<tr>";
+                    echo "<td><b>Name: </b></td><td>" . $row["name"] . "</td>";
+               echo "</tr>";
 
-               echo "<br>";
-               echo "<br>";
+               echo "<tr>";
+                    echo "<td><b>Type: </b></td><td>" . $row["type"] . "</td>";
+               echo "</tr>";
+
+               echo "<tr>";
+                    echo "<td><b>GPIO Pin: </b></td><td>" . $row["gpio_pin"] . "</td>";
+               echo "</tr>";
+
+               echo "<tr>";
+                    echo "<td><b>Status: </b></td><td><div style='display: inline-block;' id='gpio_pin_" . $row["gpio_pin"] . "'></div></td>";
+               echo "</tr>";
+
+               echo "<tr>";
+                    echo "<td><br /></td>";
+               echo "</tr>";
 
                // Add each gpio_pin to the array for the javascript
                array_push($sensors, $row["gpio_pin"]);
@@ -55,13 +75,83 @@
           echo "0 results";
      }
 
+     echo "</table>";
+
+
+
+
+
+     // Stuff for relay control
+     ?>
+     <br><br>
+     <table>
+          <tr>
+               <td>
+                    Relay 1
+               </td>
+               <td>
+                    <button type="button" onclick="relayOn(1, 4)">On</button>
+               </td>
+               <td>
+                    <button type="button" onclick="relayOff(1, 4)">Off</button>
+               </td>
+          </tr>
+          <tr>
+               <td>
+                    Relay 2
+               </td>
+               <td>
+                    <button type="button" onclick="relayOn(1, 17)">On</button>
+               </td>
+               <td>
+                    <button type="button" onclick="relayOff(1, 17)">Off</button>
+               </td>
+          </tr>
+          <tr>
+               <td>
+                    Relay 3
+               </td>
+               <td>
+                    <button type="button" onclick="relayOn(1, 27)">On</button>
+               </td>
+               <td>
+                    <button type="button" onclick="relayOff(1, 27)">Off</button>
+               </td>
+          </tr>
+          <tr>
+               <td>
+                    Relay 4
+               </td>
+               <td>
+                    <button type="button" onclick="relayOn(1, 22)">On</button>
+               </td>
+               <td>
+                    <button type="button" onclick="relayOff(1, 22)">Off</button>
+               </td>
+          </tr>
+     </table>
+     <?php
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      $conn->close();
      ?>
-
-
-
      <script>
 
+          // Javascript for the live view of sensors
           var sensors = <?php echo json_encode($sensors); ?>
 
           function loadSensorStatus(sensors_array) {
@@ -89,6 +179,27 @@
           }
 
           loadSensorStatus(sensors);
+
+
+
+
+
+          // Javascript for the control of the relay board
+          function relayOn(relay_id, relay_pin) {
+               var xhttp = new XMLHttpRequest();
+               xhttp.open("GET", "control_relay.php?relay_id=" + relay_id + "&relay_pin=" + relay_pin + "&status=ON", true);
+               xhttp.send();
+          }
+
+          function relayOff(relay_id, relay_pin) {
+               var xhttp = new XMLHttpRequest();
+               xhttp.open("GET", "control_relay.php?relay_id=" + relay_id + "&relay_pin=" + relay_pin + "&status=OFF", true);
+               xhttp.send();
+          }
+
+
+
+
 
      </script>
 </body>
