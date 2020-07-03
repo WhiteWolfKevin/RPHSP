@@ -2,6 +2,7 @@
 <html>
 <head>
      <style>
+     /* Styling for sensor status */
      #statusBoxClosed {
           background-color: #cfc ;
           display: inline-block;
@@ -15,6 +16,19 @@
           display: inline-block;
      }
 
+     /* Styling for relay status */
+     #relayChannelOn {
+          background-color: #cfc ;
+          display: inline-block;
+     }
+     #relayChannelOff {
+          background-color: #ff0000 ;
+          display: inline-block;
+     }
+     #relayChannelUnknown {
+          background-color: #ff8000 ;
+          display: inline-block;
+     }
 
 
      table, th, td {
@@ -60,7 +74,7 @@
                echo "</tr>";
 
                echo "<tr>";
-                    echo "<td><b>Status: </b></td><td><div style='display: inline-block;' id='gpio_pin_" . $row["gpio_pin"] . "'></div></td>";
+                    echo "<td><b>Status: </b></td><td><div style='display: inline-block;' id='sensor_div_id_gpio_pin_" . $row["gpio_pin"] . "'></div></td>";
                echo "</tr>";
 
                echo "<tr>";
@@ -76,70 +90,55 @@
      }
 
      echo "</table>";
+     echo "</br></br>";
+
+     // Starting dynamic entry of relays into web interace 20200702 - This section will eventually replace above static relay test
+     $sql = "SELECT * from relays";
+     $relaysResult = $conn->query($sql);
+
+     echo "<table>";
+
+     if ($relaysResult->num_rows > 0) {
+          // Display each field
+          while($row = $relaysResult->fetch_assoc()) {
+               echo "<tr>";
+                    echo "<td><b>Name: </b></td><td>" . $row["relay_name"] . "</td>";
+               echo "</tr>";
+
+               echo "<tr>";
+                    echo "<td><b>Channels: </b></td><td>" . $row["channels"] . "</td>";
+               echo "</tr>";
+
+               $sql = "SELECT * from relay_pins where relay_id = " . $row["relay_id"];
+               $relayPinsResult = $conn->query($sql);
+
+                    if ($relayPinsResult->num_rows > 0) {
+                         // Display each field
+                         while($innerRow = $relayPinsResult->fetch_assoc()) {
+                              echo "<tr>";
+                                   echo "<td><b>Pin: </b></td><td>" . $innerRow["relay_pin"] . "</td>";
+                                   echo "<td><b>Status: </b></td><td><div style='display: inline-block;' id='relay_div_id_gpio_pin_" . $innerRow["relay_pin"] . "'></div></td>";
+                                   echo "<td><button type='button' onclick='relayOn(" . $row["relay_id"] . ", " . $innerRow["relay_pin"] . ")'>On</button></td>";
+                                   echo "<td><button type='button' onclick='relayOff(" . $row["relay_id"] . ", " . $innerRow["relay_pin"] . ")'>Off</button></td>";
+                              echo "</tr>";
+                         }
+                    } else {
+                         echo "0 results";
+                    }
+
+
+               echo "<tr>";
+                    echo "<td><br /></td>";
+               echo "</tr>";
+
+          }
+     } else {
+          echo "0 results";
+     }
 
 
 
-
-
-     // Stuff for relay control
-     ?>
-     <br><br>
-     <table>
-          <tr>
-               <td>
-                    Relay 1
-               </td>
-               <td>
-                    <button type="button" onclick="relayOn(1, 4)">On</button>
-               </td>
-               <td>
-                    <button type="button" onclick="relayOff(1, 4)">Off</button>
-               </td>
-          </tr>
-          <tr>
-               <td>
-                    Relay 2
-               </td>
-               <td>
-                    <button type="button" onclick="relayOn(1, 17)">On</button>
-               </td>
-               <td>
-                    <button type="button" onclick="relayOff(1, 17)">Off</button>
-               </td>
-          </tr>
-          <tr>
-               <td>
-                    Relay 3
-               </td>
-               <td>
-                    <button type="button" onclick="relayOn(1, 27)">On</button>
-               </td>
-               <td>
-                    <button type="button" onclick="relayOff(1, 27)">Off</button>
-               </td>
-          </tr>
-          <tr>
-               <td>
-                    Relay 4
-               </td>
-               <td>
-                    <button type="button" onclick="relayOn(1, 22)">On</button>
-               </td>
-               <td>
-                    <button type="button" onclick="relayOff(1, 22)">Off</button>
-               </td>
-          </tr>
-     </table>
-     <?php
-
-
-
-
-
-
-
-
-
+     echo "</table>";
 
 
 
@@ -152,8 +151,11 @@
      <script>
 
           // Javascript for the live view of sensors
+
+          // Grab the sensors array from PHP
           var sensors = <?php echo json_encode($sensors); ?>
 
+          // Function for live updating sensor status
           function loadSensorStatus(sensors_array) {
                setInterval(function(){
                     sensors_array.forEach(getSensorStatus)
@@ -161,16 +163,17 @@
                , 1000);
           }
 
+          // Function to get sensor status and display it
           function getSensorStatus(gpio_pin) {
                var xhttp = new XMLHttpRequest();
                xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
                          if (this.responseText == "OPEN") {
-                              document.getElementById("gpio_pin_" + gpio_pin).innerHTML = "<div id='statusBoxOpen'>" + this.responseText + "</div>";
+                              document.getElementById("sensor_div_id_gpio_pin_" + gpio_pin).innerHTML = "<div id='statusBoxOpen'>" + this.responseText + "</div>";
                          } else if (this.responseText == "CLOSED") {
-                              document.getElementById("gpio_pin_" + gpio_pin).innerHTML = "<div id='statusBoxClosed'>" + this.responseText + "</div>";
+                              document.getElementById("sensor_div_id_gpio_pin_" + gpio_pin).innerHTML = "<div id='statusBoxClosed'>" + this.responseText + "</div>";
                          } else {
-                              document.getElementById("gpio_pin_" + gpio_pin).innerHTML = "<div id='statusBoxUnknown'>" + this.responseText + "</div>";
+                              document.getElementById("sensor_div_id_gpio_pin_" + gpio_pin).innerHTML = "<div id='statusBoxUnknown'>" + this.responseText + "</div>";
                          }
                     }
                };
@@ -178,13 +181,10 @@
                xhttp.send();
           }
 
+          // Function to start liveview of sensor status
           loadSensorStatus(sensors);
 
-
-
-
-
-          // Javascript for the control of the relay board
+          // Javascript for the control of the relay boards
           function relayOn(relay_id, relay_pin) {
                var xhttp = new XMLHttpRequest();
                xhttp.open("GET", "control_relay.php?relay_id=" + relay_id + "&relay_pin=" + relay_pin + "&status=ON", true);
