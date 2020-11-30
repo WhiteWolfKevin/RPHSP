@@ -237,7 +237,7 @@ def rfidReader():
             print("Detected")
 
             # Sound the buzzer
-            buzzerSoundRunning.start()
+            buzzerSound()
 
             (error, uid) = rdr.anticoll()
             if not error:
@@ -290,6 +290,8 @@ try:
     rfidReaderRunning = threading.Thread(target=rfidReader)
     rfidReaderRunning.daemon = True
     rfidReaderRunning.start()
+
+
 
     while True:
         # Keep Running Application
