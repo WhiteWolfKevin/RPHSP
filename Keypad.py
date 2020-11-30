@@ -19,6 +19,17 @@ import requests
 # Import to provide IP address to keypad_auth.php
 import netifaces as ni
 
+# Import for Buzzer
+from gpiozero import Buzzer
+
+buzzer = Buzzer(21)
+
+buzzer.on()
+sleep(2)
+buzzer.off()
+
+
+
 # Configure Keypad Buttons
 KEYPAD = [
     [1, 2, 3],
@@ -96,7 +107,7 @@ def accessAttempt(result):
 
 # Send a request to the web interface via a GET request
 def securitySystemRequest(url):
-    try:   
+    try:
         return requests.get("http://192.168.1.125/webinterface/" + url).content
     except:
         return "ERROR CONN..."
