@@ -19,10 +19,6 @@ import requests
 # Import to provide IP address to keypad_auth.php
 import netifaces as ni
 
-
-
-
-
 # Configure Keypad Buttons
 KEYPAD = [
     [1, 2, 3],
@@ -80,6 +76,17 @@ def errorLED():
     time.sleep(0.2)
     GPIO.output(12,0)
 
+
+# Configure the pins for the Buzzer output and turn it off to start
+GPIO.setup(21,GPIO.OUT)
+GPIO.output(21,0)
+
+# Function for Buzzer Output
+def buzzerSound():
+    GPIO.output(21,1)
+    time.sleep(0.1)
+    GPIO.output(21,0)
+
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
     if (result == "Access Granted"):
@@ -119,6 +126,9 @@ def keyPress(key):
     global backlightTimer
     backlightTimer = backlightTimerDuration
     lcd.backlight("On")
+
+    # Sound the buzzer
+    buzzerSound()
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
@@ -254,18 +264,6 @@ def rfidReader():
 
 # Main Function
 try:
-
-    # Buzzer testing
-    GPIO.setup(21,GPIO.OUT)
-    GPIO.output(21,1)
-    time.sleep(0.2)
-    GPIO.output(21,0)
-    time.sleep(0.2)
-
-
-
-
-
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
