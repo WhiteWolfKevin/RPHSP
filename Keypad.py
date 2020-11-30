@@ -236,9 +236,6 @@ def rfidReader():
         if not error:
             print("Detected")
 
-            # Sound the buzzer
-            buzzerSound()
-
             (error, uid) = rdr.anticoll()
             if not error:
 
