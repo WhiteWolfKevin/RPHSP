@@ -128,7 +128,9 @@ def keyPress(key):
     lcd.backlight("On")
 
     # Sound the buzzer
-    buzzerSound()
+    buzzerSoundRunning = threading.thread(target=buzzerSound)
+    buzzerSoundRunning.daemon = True
+    buzzerSoundRunning.start()
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
