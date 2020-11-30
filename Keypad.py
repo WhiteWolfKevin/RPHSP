@@ -19,14 +19,7 @@ import requests
 # Import to provide IP address to keypad_auth.php
 import netifaces as ni
 
-# Import for Buzzer
-from gpiozero import Buzzer
 
-buzzer = Buzzer(21)
-
-buzzer.on()
-sleep(2)
-buzzer.off()
 
 
 
@@ -261,6 +254,17 @@ def rfidReader():
 
 # Main Function
 try:
+
+    # Buzzer testing
+    GPIO.output(21,1)
+    time.sleep(0.2)
+    GPIO.output(12,0)
+    time.sleep(0.2)
+
+
+
+
+
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
