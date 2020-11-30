@@ -90,7 +90,8 @@ def buzzerSound():
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
     if (result == "Access Granted"):
-        lcd.updateLCDScreen(result, 2)
+        lcd.updateLCDScr
+        een(result, 2)
         accessGrantedLED()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
@@ -234,6 +235,11 @@ def rfidReader():
         (error, data) = rdr.request()
         if not error:
             print("Detected")
+
+            # Sound the buzzer
+            buzzerSoundRunning = threading.Thread(target=buzzerSound)
+            buzzerSoundRunning.daemon = True
+            buzzerSoundRunning.start()
 
             (error, uid) = rdr.anticoll()
             if not error:
