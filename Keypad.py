@@ -256,9 +256,10 @@ def rfidReader():
 try:
 
     # Buzzer testing
+    GPIO.setup(21,GPIO.OUT)
     GPIO.output(21,1)
     time.sleep(0.2)
-    GPIO.output(12,0)
+    GPIO.output(21,0)
     time.sleep(0.2)
 
 
