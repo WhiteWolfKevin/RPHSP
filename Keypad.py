@@ -133,8 +133,8 @@ def keyPress(key):
     lcd.backlight("On")
 
     # Make the buzzer sound
-    buzzerButton = threading.Thread(target=buzzerButton)
-    buzzerButton.start()
+    buzzerButtonSound = threading.Thread(target=buzzerButton)
+    buzzerButtonSound.start()
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
