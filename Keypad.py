@@ -23,9 +23,6 @@ import requests
 # Import to provide IP address to keypad_auth.php
 import netifaces as ni
 
-# Import for buzzer subprocess
-import subprocess
-
 # ==================================================================
 # Functions and Configurations
 # ==================================================================
@@ -276,8 +273,15 @@ def rfidReader():
 try:
 
     # Buzzer Test
-    subprocess.run(buzzerSound())
-    # beepBuzzer.wait()
+    buzzerSound = threading.Thread(target=buzzerSound())
+    buzzerSound.start()
+    time.sleep(1)
+    buzzerSound.start()
+    time.sleep(1)
+    buzzerSound.start()
+    time.sleep(1)
+
+
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
