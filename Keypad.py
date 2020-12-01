@@ -19,6 +19,15 @@ import requests
 # Import to provide IP address to keypad_auth.php
 import netifaces as ni
 
+# Import for buzzer subprocess
+import subprocess
+
+command1 = subprocess.Popen(buzzerSound())
+
+command1.run()
+
+
+
 # Configure Keypad Buttons
 KEYPAD = [
     [1, 2, 3],
@@ -127,11 +136,6 @@ def keyPress(key):
     global backlightTimer
     backlightTimer = backlightTimerDuration
     lcd.backlight("On")
-
-    # Sound the buzzer
-    buzzerSoundRunning = threading.Thread(target=buzzerSound)
-    buzzerSoundRunning.daemon = True
-    buzzerSoundRunning.start()
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
