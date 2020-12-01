@@ -271,13 +271,13 @@ def rfidReader():
 try:
 
     # Buzzer Test
-    buzzerSound = threading.Thread(target=buzzerSound())
+    buzzerSound = threading.Thread(target=buzzerButton())
     buzzerSound.start()
     time.sleep(1)
-    buzzerSound = threading.Thread(target=buzzerSound())
+    buzzerSound = threading.Thread(target=buzzerButton())
     buzzerSound.start()
     time.sleep(1)
-    buzzerSound = threading.Thread(target=buzzerSound())
+    buzzerSound = threading.Thread(target=buzzerButton())
     buzzerSound.start()
     time.sleep(1)
 
