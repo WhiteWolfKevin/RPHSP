@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+# ==================================================================
+# Imports
+# ==================================================================
+
 # Imports for system functions
 import RPi.GPIO as GPIO
 import os
@@ -22,11 +26,9 @@ import netifaces as ni
 # Import for buzzer subprocess
 import subprocess
 
-command1 = subprocess.Popen(buzzerSound())
-
-command1.run()
-
-
+# ==================================================================
+# Functions and Configurations
+# ==================================================================
 
 # Configure Keypad Buttons
 KEYPAD = [
@@ -84,7 +86,6 @@ def errorLED():
     GPIO.output(12,1)
     time.sleep(0.2)
     GPIO.output(12,0)
-
 
 # Configure the pins for the Buzzer output and turn it off to start
 GPIO.setup(21,GPIO.OUT)
@@ -269,8 +270,14 @@ def rfidReader():
                 print("")
         time.sleep(1)
 
+# ==================================================================
 # Main Function
+# ==================================================================
 try:
+
+    # Buzzer Test
+    beepBuzzer = subprocess.Popen(buzzerSound())
+    beepBuzzer.run()
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
@@ -291,8 +298,6 @@ try:
     rfidReaderRunning = threading.Thread(target=rfidReader)
     rfidReaderRunning.daemon = True
     rfidReaderRunning.start()
-
-
 
     while True:
         # Keep Running Application
