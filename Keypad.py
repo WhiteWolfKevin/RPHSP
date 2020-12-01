@@ -275,10 +275,11 @@ try:
     # Buzzer Test
     buzzerSound = threading.Thread(target=buzzerSound())
     buzzerSound.start()
+
     time.sleep(5)
-    buzzerSound.start()
+    buzzerSound.run()
     time.sleep(5)
-    buzzerSound.start()
+    buzzerSound.run()
     time.sleep(5)
 
 
