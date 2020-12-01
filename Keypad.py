@@ -85,13 +85,11 @@ def buzzerButton():
 
 # Function for Buzzer Alarm Output
 def buzzerAlarm():
-    for i in range(10):
+    for i in range(3):
         GPIO.output(21,1)
         time.sleep(0.5)
         GPIO.output(21,0)
         time.sleep(0.5)
-
-
 
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
@@ -134,9 +132,6 @@ def keyPress(key):
     backlightTimer = backlightTimerDuration
     lcd.backlight("On")
 
-    # Make Buzzer Sound
-    buzzerButton()
-
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
 
@@ -148,7 +143,7 @@ def keyPress(key):
 
         result = securitySystemRequest("keypad_auth.php?pin_code=" + userEntry)
 
-        # Added the empty userEntry check as a quick test of error LEDs
+        # Added the empty userEntry check as a quick test of error LEDs and Buzzer
         if (userEntry == ""):
             buzzerAlarm()
             errorLED()
@@ -274,6 +269,17 @@ def rfidReader():
 # Main Function
 # ==================================================================
 try:
+
+    # Buzzer Test
+    buzzerSound = threading.Thread(target=buzzerAlarm())
+    buzzerSound.start()
+    time.sleep(1)
+    buzzerSound.start()
+    time.sleep(1)
+    buzzerSound.start()
+    time.sleep(1)
+
+
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
