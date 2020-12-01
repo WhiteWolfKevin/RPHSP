@@ -120,7 +120,6 @@ def accessAttempt(result):
     else:
         lcd.updateLCDScreen(result, 2)
         errorLED()
-        buzzerAlarm()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
 
@@ -162,6 +161,7 @@ def keyPress(key):
 
         # Added the empty userEntry check as a quick test of error LEDs
         if (userEntry == ""):
+            buzzerAlarm()
             errorLED()
             time.sleep(1)
         else:
