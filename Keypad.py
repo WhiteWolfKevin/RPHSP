@@ -276,8 +276,8 @@ def rfidReader():
 try:
 
     # Buzzer Test
-    beepBuzzer = subprocess.Popen(buzzerSound())
-    beepBuzzer.wait()
+    # beepBuzzer = subprocess.Popen(buzzerSound())
+    # beepBuzzer.wait()
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
