@@ -85,11 +85,11 @@ def buzzerButton():
 
 # Function for Buzzer Alarm Output
 def errorBuzzer():
-    for i in range(2):
+    for i in range(5):
         GPIO.output(21,1)
-        time.sleep(1)
+        time.sleep(0.2)
         GPIO.output(21,0)
-        time.sleep(1)
+        time.sleep(0.2)
 
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
@@ -149,8 +149,14 @@ def keyPress(key):
 
         # Added the empty userEntry check as a quick test of error LEDs and Buzzer
         if (userEntry == ""):
-            errorLED()
-            errorBuzzer()
+
+            # Display the error LEDs
+            errorLEDDisplay = threading.Thread(target=errorLED)
+            errorLEDDisplay.start()
+
+            # Sound the error buzzer
+            errorBuzzerSound = threading.Thread(target=errorBuzzer)
+            errorBuzzerSound.start()
             time.sleep(1)
         else:
             accessAttempt(result)
