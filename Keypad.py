@@ -87,9 +87,9 @@ def buzzerButton():
 def errorBuzzer():
     for i in range(2):
         GPIO.output(21,1)
-        time.sleep(0.5)
+        time.sleep(1)
         GPIO.output(21,0)
-        time.sleep(0.5)
+        time.sleep(1)
 
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
