@@ -65,12 +65,12 @@ def accessDeniedLED():
 
 # Function for error LED feedback
 def errorLED():
-    for i in range(3):
+    for i in range(5):
         GPIO.output(6,1)
-        time.sleep(0.5)
+        time.sleep(0.2)
         GPIO.output(6,0)
         GPIO.output(12,1)
-        time.sleep(0.5)
+        time.sleep(0.2)
         GPIO.output(12,0)
 
 # Configure the pins for the Buzzer output and turn it off to start
@@ -85,7 +85,7 @@ def buzzerButton():
 
 # Function for Buzzer Alarm Output
 def errorBuzzer():
-    for i in range(3):
+    for i in range(2):
         GPIO.output(21,1)
         time.sleep(0.5)
         GPIO.output(21,0)
