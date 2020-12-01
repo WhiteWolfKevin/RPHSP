@@ -67,10 +67,10 @@ def accessDeniedLED():
 def errorLED():
     for i in range(3):
         GPIO.output(6,1)
-        time.sleep(0.2)
+        time.sleep(0.5)
         GPIO.output(6,0)
         GPIO.output(12,1)
-        time.sleep(0.2)
+        time.sleep(0.5)
         GPIO.output(12,0)
 
 # Configure the pins for the Buzzer output and turn it off to start
@@ -80,11 +80,11 @@ GPIO.output(21,0)
 # Function for Buzzer Button Output
 def buzzerButton():
     GPIO.output(21,1)
-    time.sleep(0.05)
+    time.sleep(0.2)
     GPIO.output(21,0)
 
 # Function for Buzzer Alarm Output
-def buzzerAlarm():
+def errorBuzzer():
     for i in range(3):
         GPIO.output(21,1)
         time.sleep(0.5)
@@ -132,6 +132,10 @@ def keyPress(key):
     backlightTimer = backlightTimerDuration
     lcd.backlight("On")
 
+    # Make the buzzer sound
+    buzzerButton = threading.Thread(target=buzzerButton)
+    buzzerButton.start()
+
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
 
@@ -147,6 +151,7 @@ def keyPress(key):
         if (userEntry == ""):
             buzzerAlarm()
             errorLED()
+            errorBuzzer()
             time.sleep(1)
         else:
             accessAttempt(result)
@@ -269,19 +274,6 @@ def rfidReader():
 # Main Function
 # ==================================================================
 try:
-
-    # Buzzer Test
-    buzzerSound = threading.Thread(target=buzzerButton())
-    buzzerSound.start()
-    time.sleep(1)
-    buzzerSound = threading.Thread(target=buzzerButton())
-    buzzerSound.start()
-    time.sleep(1)
-    buzzerSound = threading.Thread(target=buzzerButton())
-    buzzerSound.start()
-    time.sleep(1)
-
-
 
     # Set the default backlight time and create the lock to be used by the LCD screen
     backlightTimer = backlightTimerDuration
