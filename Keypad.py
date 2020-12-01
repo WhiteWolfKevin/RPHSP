@@ -94,8 +94,7 @@ def errorBuzzer():
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
     if (result == "Access Granted"):
-        lcd.updateLCDScr
-        een(result, 2)
+        lcd.updateLCDScreen(result, 2)
         accessGrantedLED()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
@@ -157,7 +156,7 @@ def keyPress(key):
             # Sound the error buzzer
             errorBuzzerSound = threading.Thread(target=errorBuzzer)
             errorBuzzerSound.start()
-            time.sleep(1)
+            time.sleep(2)
         else:
             accessAttempt(result)
 
