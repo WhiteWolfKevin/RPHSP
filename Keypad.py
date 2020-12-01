@@ -88,11 +88,21 @@ def errorLED():
 GPIO.setup(21,GPIO.OUT)
 GPIO.output(21,0)
 
-# Function for Buzzer Output
-def buzzerSound():
+# Function for Buzzer Button Output
+def buzzerButton():
     GPIO.output(21,1)
     time.sleep(0.05)
     GPIO.output(21,0)
+
+# Function for Buzzer Alarm Output
+def buzzerAlarm():
+    for i in range(10)
+        GPIO.output(21,1)
+        time.sleep(0.05)
+        GPIO.output(21,0)
+        time.sleep(0.05)
+
+
 
 # Function to handle if an access attempt was requested
 def accessAttempt(result):
@@ -110,6 +120,7 @@ def accessAttempt(result):
     else:
         lcd.updateLCDScreen(result, 2)
         errorLED()
+        buzzerAlarm()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
 
@@ -136,7 +147,7 @@ def keyPress(key):
     lcd.backlight("On")
 
     # Make Buzzer Sound
-    buzzerSound()
+    buzzerButton()
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
