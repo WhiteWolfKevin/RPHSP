@@ -96,7 +96,7 @@ def buzzerButton():
 
 # Function for Buzzer Alarm Output
 def buzzerAlarm():
-    for i in range(10)
+    for i in range(10):
         GPIO.output(21,1)
         time.sleep(0.05)
         GPIO.output(21,0)
