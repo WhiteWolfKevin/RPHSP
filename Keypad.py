@@ -149,7 +149,6 @@ def keyPress(key):
 
         # Added the empty userEntry check as a quick test of error LEDs and Buzzer
         if (userEntry == ""):
-            buzzerAlarm()
             errorLED()
             errorBuzzer()
             time.sleep(1)
