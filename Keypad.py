@@ -65,24 +65,13 @@ def accessDeniedLED():
 
 # Function for error LED feedback
 def errorLED():
-    GPIO.output(6,1)
-    time.sleep(0.2)
-    GPIO.output(6,0)
-    GPIO.output(12,1)
-    time.sleep(0.2)
-    GPIO.output(12,0)
-    GPIO.output(6,1)
-    time.sleep(0.2)
-    GPIO.output(6,0)
-    GPIO.output(12,1)
-    time.sleep(0.2)
-    GPIO.output(12,0)
-    GPIO.output(6,1)
-    time.sleep(0.2)
-    GPIO.output(6,0)
-    GPIO.output(12,1)
-    time.sleep(0.2)
-    GPIO.output(12,0)
+    for i in range(3):
+        GPIO.output(6,1)
+        time.sleep(0.2)
+        GPIO.output(6,0)
+        GPIO.output(12,1)
+        time.sleep(0.2)
+        GPIO.output(12,0)
 
 # Configure the pins for the Buzzer output and turn it off to start
 GPIO.setup(21,GPIO.OUT)
