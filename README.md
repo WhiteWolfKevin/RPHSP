@@ -2,13 +2,13 @@
 This is a project I've been working on to use Raspberry Pis as a whole home security system.
 
 ### Keypad Pi
-**Required Packages**\
+**Required Packages**
 ```
 pip install pi-rc522
 pip install pad4pi
 ```
 
-**12-Digit Keypad Configuration**\
+**12-Digit Keypad Configuration**
 ```
 GPIO Pin Numbers
 14,15,18,17,27,22,13
