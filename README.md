@@ -1,14 +1,14 @@
 # Raspberry Pi Home Security Project
 This is a project I've been working on to use Raspberry Pis as a whole home security system.
 
-###### Keypad Pi ######
-**Required Packages**
+### Keypad Pi
+**Required Packages**\
 ```
 pip install pi-rc522
 pip install pad4pi
 ```
 
-**12-Digit Keypad Configuration**
+**12-Digit Keypad Configuration**\
 ```
 GPIO Pin Numbers
 14,15,18,17,27,22,13
@@ -25,7 +25,7 @@ ROW [15, 22, 27, 13]
 /home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
 ```
 
-**Keypad I2C LCD Screen**
+**Keypad I2C LCD Screen**\
 Helpful Guide
 https://howchoo.com/g/zwq2zwixotu/how-to-make-a-raspberry-pi-smart-alarm-clock
 
@@ -36,6 +36,6 @@ sudo apt-get install python-smbus
 i2cdetect -y 1
 ```
 
-**RFID MFRC522 Info**
+**RFID MFRC522 Info**\
 Helpful Guide
 https://github.com/ondryaso/pi-rc522
