@@ -105,11 +105,6 @@ def accessAttempt(result):
         accessGrantedLED()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
-    elif (result == "Access Granted without Arming"):
-        lcd.updateLCDScreen(result, 2)
-        accessGrantedLED()
-        time.sleep(30)
-        lcd.updateLCDScreen("                    ", 2)
     elif (result == "Access Denied"):
         lcd.updateLCDScreen(result, 2)
         accessDeniedLED()
@@ -120,13 +115,6 @@ def accessAttempt(result):
         errorLED()
         time.sleep(1)
         lcd.updateLCDScreen("                    ", 2)
-
-# Send a request to the web interface via a GET request
-def securitySystemRequest(url):
-    try:
-        return requests.get("http://192.168.1.125/webinterface/" + url).content
-    except:
-        return "ERROR CONN..."
 
 # Function to handle keypad presses
 def keyPress(key):
@@ -149,8 +137,6 @@ def keyPress(key):
     # Do stuff depending on what key was pressed
     if (key == "#"):
 
-        result = securitySystemRequest("keypad_auth.php?pin_code=" + userEntry)
-
         # Added the empty userEntry check as a quick test of error LEDs and Buzzer
         if (userEntry == ""):
 
@@ -163,7 +149,33 @@ def keyPress(key):
             errorBuzzerSound.start()
             time.sleep(2)
         else:
-            accessAttempt(result)
+            print("User pressed # key. Do something!")
+            i = 30
+            while (i > 0):
+                # Make the buzzer sound
+                buzzerButtonSound = threading.Thread(target=buzzerButton)
+                buzzerButtonSound.start()
+
+                # Reset the backlight timer so it doesn't go out
+                backlightTimer = backlightTimerDuration
+
+                # Display the time left until the system is armed
+                print("Time to arm: " + str(i))
+                lcd.updateLCDScreen("                    ", 2)
+                lcd.updateLCDScreen("                    ", 2)
+                lcd.updateLCDScreen("                    ", 2)
+                lcd.updateLCDScreen("                    ", 2)
+                lcd.updateLCDScreen("                    ", 2)
+                lcd.updateLCDScreen("                    ", 2)
+                lcd.updateLCDScreen("Arming in: " + str(i), 2)
+                i = i - 1
+                time.sleep(1)
+            lcd.updateLCDScreen("SYSTEM IS ARMED", 2)
+            time.sleep(2)
+            lcd.updateLCDScreen("                    ", 2)
+
+
+
 
         lcd.updateLCDScreen("Passcode:[      ]", 1)
         keypressCounter = 0
@@ -220,10 +232,8 @@ def controlPanel():
 
     global backlightTimer
 
-    global armingCountdownTimer = 30
-
     while True:
-        alarmStatus = securitySystemRequest("alarm_status.php")
+        alarmStatus = "ARMED"
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
@@ -270,7 +280,7 @@ def rfidReader():
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                result = securitySystemRequest("keypad_auth.php?rfid_card_number=" + uidInString)
+                result = "Access Denied"
 
                 accessAttempt(result)
 
