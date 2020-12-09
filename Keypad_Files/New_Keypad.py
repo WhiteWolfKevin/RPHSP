@@ -18,6 +18,8 @@ from pad4pi import rpi_gpio
 
 # Imports for RFID
 from pirc522 import RFID
+
+# Imports for interacting with web interface
 import requests
 
 # ==================================================================
@@ -45,7 +47,7 @@ backlightTimerDuration = 30
 GPIO.setmode(GPIO.BCM)
 
 # ==================
-# LED Configurations
+# LED Functions
 # ==================
 
 # Configure the pins for LED feedback and turn them off to start
@@ -77,7 +79,7 @@ def errorLED():
         GPIO.output(12,0)
 
 # ==================
-# Buzzer Configurations
+# Buzzer Functions
 # ==================
 
 # Configure the pins for the Buzzer output and turn it off to start
@@ -90,6 +92,12 @@ def buzzerButton():
     time.sleep(0.2)
     GPIO.output(21,0)
 
+# Function for Buzzer Access Denied Output
+def accessDeniedBuzzer():
+    GPIO.output(21,1)
+    time.sleep(1)
+    GPIO.output(21,0)
+
 # Function for Buzzer Alarm Output
 def errorBuzzer():
     for i in range(5):
@@ -98,23 +106,58 @@ def errorBuzzer():
         GPIO.output(21,0)
         time.sleep(0.2)
 
-# Function to handle if an access attempt was requested
-def accessAttempt(result):
-    if (result == "Access Granted"):
-        lcd.updateLCDScreen(result, 2)
-        accessGrantedLED()
-        time.sleep(1)
+# ==================
+# LCD Screen Functions
+# ==================
+def accessDeniedLCDDisplay():
+    lcd.updateLCDScreen("Access Denied", 2)
+    time.sleep(1)
+    lcd.updateLCDScreen("                    ", 2)
+
+def accessGrantedLCDDisplay():
+    lcd.updateLCDScreen("Access Granted", 2)
+    time.sleep(1)
+    lcd.updateLCDScreen("                    ", 2)
+
+# ==================
+# Access Configurations
+# ==================
+def accessDenied():
+    # Run the functions that correspond to an accessDenied event
+    accessDeniedLCDDisplayRun = threading.Thread(target=accessDeniedLCDDisplay)
+    accessDeniedLEDRun = threading.Thread(target=accessDeniedLED)
+    accessDeniedBuzzerRun = threading.Thread(target=accessDeniedBuzzer)
+    accessDeniedLCDDisplayRun.start()
+    accessDeniedLEDRun.start()
+    accessDeniedBuzzerRun.start()
+    # Sleep for 1 second while the accessDenied function finish
+    time.sleep(1)
+
+def accessGranted():
+
+    # Grab the variable for the alarmStatus
+    global alarmStatus
+
+    if (alarmStatus == "Disarmed"):
+        i = 3
+        while (i > 0):
+            # Make the buzzer sound
+            buzzerButtonSound = threading.Thread(target=buzzerButton)
+            buzzerButtonSound.start()
+
+            # Reset the backlight timer so it doesn't go out
+            backlightTimer = backlightTimerDuration
+
+            # Display the time left until the system is armed
+            print("Time to arm: " + str(i))
+            lcd.updateLCDScreen("Arming in: " + str(i), 2)
+            i = i - 1
+            time.sleep(1)
+        lcd.updateLCDScreen("SYSTEM IS ARMED", 2)
+        time.sleep(2)
         lcd.updateLCDScreen("                    ", 2)
-    elif (result == "Access Denied"):
-        lcd.updateLCDScreen(result, 2)
-        accessDeniedLED()
-        time.sleep(1)
-        lcd.updateLCDScreen("                    ", 2)
-    else:
-        lcd.updateLCDScreen(result, 2)
-        errorLED()
-        time.sleep(1)
-        lcd.updateLCDScreen("                    ", 2)
+    elif (alarmStatus == "Armed"):
+        print("This is where I need to disarm the system")
 
 # Function to handle keypad presses
 def keyPress(key):
@@ -137,7 +180,7 @@ def keyPress(key):
     # Do stuff depending on what key was pressed
     if (key == "#"):
 
-        # Added the empty userEntry check as a quick test of error LEDs and Buzzer
+        # Run error functions if the entry is blank
         if (userEntry == ""):
 
             # Display the error LEDs
@@ -149,34 +192,17 @@ def keyPress(key):
             errorBuzzerSound.start()
             time.sleep(2)
         else:
-            print("User pressed # key. Do something!")
-            i = 30
-            while (i > 0):
-                # Make the buzzer sound
-                buzzerButtonSound = threading.Thread(target=buzzerButton)
-                buzzerButtonSound.start()
+            # Check if the entered code is correct
+            result = requests.get("http://192.168.1.125/webinterface/confirm_user_entry.php?pin_code=" + userEntry).content
 
-                # Reset the backlight timer so it doesn't go out
-                backlightTimer = backlightTimerDuration
+            print("Result: " + result)
 
-                # Display the time left until the system is armed
-                print("Time to arm: " + str(i))
-                lcd.updateLCDScreen("                    ", 2)
-                lcd.updateLCDScreen("                    ", 2)
-                lcd.updateLCDScreen("                    ", 2)
-                lcd.updateLCDScreen("                    ", 2)
-                lcd.updateLCDScreen("                    ", 2)
-                lcd.updateLCDScreen("                    ", 2)
-                lcd.updateLCDScreen("Arming in: " + str(i), 2)
-                i = i - 1
-                time.sleep(1)
-            lcd.updateLCDScreen("SYSTEM IS ARMED", 2)
-            time.sleep(2)
-            lcd.updateLCDScreen("                    ", 2)
+            if (result == "Access Denied"):
+                accessDenied()
+            elif (result == "Access Granted"):
+                accessGranted()
 
-
-
-
+        # Clear the code that was entered
         lcd.updateLCDScreen("Passcode:[      ]", 1)
         keypressCounter = 0
 
@@ -281,8 +307,6 @@ def rfidReader():
                 print("UID in Str: " + uidInString)
 
                 result = "Access Denied"
-
-                accessAttempt(result)
 
                 # We must stop crypto
                 util.deauth()
