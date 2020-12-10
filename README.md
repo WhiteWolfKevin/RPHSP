@@ -135,7 +135,7 @@ INSERT INTO sensors (gpio_pin, name, type) VALUES (26, "Living Room Window", "Wi
 ```
 
 ```
-INSERT INTO user_information (first_name, last_name) VALUES ("Kevin", "Tate");
+INSERT INTO user_information (first_name, last_name) VALUES ("John", "Smith");
 INSERT INTO rfid_cards VALUES ("4a1a560f09", 1);
 INSERT INTO pin_codes VALUES (111111, 1);
 ```
@@ -170,8 +170,8 @@ Subsequent response definitions will only detail the expected value of the 'data
 [
      {
           "user_id": "0001",
-          "first_name": "Kevin",
-          "last_name": "Tate",
+          "first_name": "John",
+          "last_name": "Smith",
           "date_added": "2020-04-14 19:56:32",
           "expiration_date": "2021-04-14 19:56:32",
           "enabled": "True",
@@ -180,8 +180,8 @@ Subsequent response definitions will only detail the expected value of the 'data
      }
      {
           "user_id": "0002",
-          "first_name": "Ryan",
-          "last_name": "Tate",
+          "first_name": "Jane",
+          "last_name": "Doe",
           "date_added": "2020-04-14 19:56:32",
           "expiration_date": "2021-04-14 19:56:32",
           "enabled": "True",
@@ -208,8 +208,8 @@ Subsequent response definitions will only detail the expected value of the 'data
 ```json
 {
      "user_id": "0001",
-     "first_name": "Kevin",
-     "last_name": "Tate",
+     "first_name": "John",
+     "last_name": "Smith",
      "date_added": "2020-04-14 19:56:32",
      "expiration_date": "2021-04-14 19:56:32",
      "enabled": "True",
@@ -230,8 +230,8 @@ Subsequent response definitions will only detail the expected value of the 'data
 ```json
 {
      "user_id": "0001",
-     "first_name": "Kevin",
-     "last_name": "Tate",
+     "first_name": "John",
+     "last_name": "Smith",
      "date_added": "2020-04-14 19:56:32",
      "expiration_date": "2021-04-14 19:56:32",
      "enabled": "True",
