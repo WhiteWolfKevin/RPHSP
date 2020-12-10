@@ -40,6 +40,13 @@ i2cdetect -y 1
 Helpful Guide
 https://github.com/ondryaso/pi-rc522
 
+### Web Server Configuration
+```
+sudo apt install apache2
+sudo apt install php-mysql
+```
+
+
 ### Database Configuration
 **Raspberry Pi Configuration**\
 Make the database accessible from the network.
@@ -140,3 +147,104 @@ INSERT INTO relay_pins VALUES (1, 17, "Off");
 INSERT INTO relay_pins VALUES (1, 27, "Off");
 INSERT INTO relay_pins VALUES (1, 22, "Off");
 ```
+
+### REst API Stuff
+All responses will have the form
+```json
+{
+     "data": "Mixed type holding the content of the response",
+     "message": "Description of what happened"
+}
+```
+
+Subsequent response definitions will only detail the expected value of the 'data field'
+
+### List all users
+**Definition**
+'GET /users'
+
+**Response**
+- '200 OK' on success
+
+```json
+[
+     {
+          "user_id": "0001",
+          "first_name": "Kevin",
+          "last_name": "Tate",
+          "date_added": "2020-04-14 19:56:32",
+          "expiration_date": "2021-04-14 19:56:32",
+          "enabled": "True",
+          "pin_code": "111111",
+          "rfid_card": "4a1a560f09"
+     }
+     {
+          "user_id": "0002",
+          "first_name": "Ryan",
+          "last_name": "Tate",
+          "date_added": "2020-04-14 19:56:32",
+          "expiration_date": "2021-04-14 19:56:32",
+          "enabled": "True",
+          "pin_code": "222222",
+          "rfid_card": "4a1a560f09"
+     }
+]
+```
+
+### Register a new user
+**Definition**
+'POST /users'
+
+**Arguments**
+- '"first_name":string' The first name of the user
+- '"last_name":string' The last name of the user
+- '"expiration_date:"string' The expiration date of the user
+- '"pin_code":number' The 6-digit pin code for the user
+- '"rfid_card":string' The HEX code of the user's rfid card
+
+**Response**
+- '201 Created' on success
+
+```json
+{
+     "user_id": "0001",
+     "first_name": "Kevin",
+     "last_name": "Tate",
+     "date_added": "2020-04-14 19:56:32",
+     "expiration_date": "2021-04-14 19:56:32",
+     "enabled": "True",
+     "pin_code": "111111",
+     "rfid_card": "4a1a560f09"
+}
+```
+
+## Lookup user details
+**Definition**
+'GET /users/<user_id>'
+
+**Response**
+
+- '404 Not Found' If the user doesn't exist
+- '200 OK' On success
+
+```json
+{
+     "user_id": "0001",
+     "first_name": "Kevin",
+     "last_name": "Tate",
+     "date_added": "2020-04-14 19:56:32",
+     "expiration_date": "2021-04-14 19:56:32",
+     "enabled": "True",
+     "pin_code": "111111",
+     "rfid_card": "4a1a560f09"
+}
+```
+
+## Delete a user
+**Definition**
+'DELETE /users/<user_id>'
+
+**Response**
+
+- '404 Not Found' If the user doesn't exist
+- '204 No Content' On success
