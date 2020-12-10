@@ -87,7 +87,7 @@ GPIO.setup(21,GPIO.OUT)
 GPIO.output(21,0)
 
 # Function for Buzzer Button Output
-def buzzerButton():
+def buttonPushedBuzzer():
     GPIO.output(21,1)
     time.sleep(0.2)
     GPIO.output(21,0)
@@ -109,15 +109,21 @@ def errorBuzzer():
 # ==================
 # LCD Screen Functions
 # ==================
+def accessGrantedLCDDisplay():
+    lcd.updateLCDScreen("Access Granted", 2)
+    time.sleep(1)
+    lcd.updateLCDScreen("                    ", 2)
+
 def accessDeniedLCDDisplay():
     lcd.updateLCDScreen("Access Denied", 2)
     time.sleep(1)
     lcd.updateLCDScreen("                    ", 2)
 
-def accessGrantedLCDDisplay():
-    lcd.updateLCDScreen("Access Granted", 2)
-    time.sleep(1)
-    lcd.updateLCDScreen("                    ", 2)
+# ==================
+# Database Functions
+# ==================
+def getAlarmStatus():
+    return requests.get("http://localhost/webinterface/alarm_status.php").content
 
 # ==================
 # Access Configurations
@@ -133,17 +139,18 @@ def accessDenied():
     # Sleep for 1 second while the accessDenied function finish
     time.sleep(1)
 
-def accessGranted():
+def accessGranted(user_entry):
+    accessGrantedLED()
 
-    # Grab the variable for the alarmStatus
-    global alarmStatus
+    alarmStatus = getAlarmStatus();
 
-    if (alarmStatus == "Disarmed"):
-        i = 3
+    if (alarmStatus == "DISARMED"):
+        print("This is where I need to ARM the system")
+        i = 5
         while (i > 0):
             # Make the buzzer sound
-            buzzerButtonSound = threading.Thread(target=buzzerButton)
-            buzzerButtonSound.start()
+            buttonPushedBuzzerSound = threading.Thread(target=buttonPushedBuzzer)
+            buttonPushedBuzzerSound.start()
 
             # Reset the backlight timer so it doesn't go out
             backlightTimer = backlightTimerDuration
@@ -153,11 +160,30 @@ def accessGranted():
             lcd.updateLCDScreen("Arming in: " + str(i), 2)
             i = i - 1
             time.sleep(1)
+
+        # Arm the security system
+        if (len(user_entry) == 6):
+            requests.get("http://localhost/webinterface/keypad_auth.php?pin_code=" + user_entry).content
+        elif (len(user_entry) == 10):
+            requests.get("http://localhost/webinterface/keypad_auth.php?rfid_card_number=" + user_entry).content
+        else:
+            print("Error trying to arm")
+
+
         lcd.updateLCDScreen("SYSTEM IS ARMED", 2)
         time.sleep(2)
         lcd.updateLCDScreen("                    ", 2)
-    elif (alarmStatus == "Armed"):
-        print("This is where I need to disarm the system")
+    elif (alarmStatus == "ARMED"):
+        print("This is where I need to DISARM the system")
+        # Disarm the security system
+        if (len(user_entry) == 6):
+            requests.get("http://localhost/webinterface/keypad_auth.php?pin_code=" + user_entry).content
+        elif (len(user_entry) == 10):
+            requests.get("http://localhost/webinterface/keypad_auth.php?rfid_card_number=" + user_entry).content
+        else:
+            print("Error trying to arm")
+    else:
+        print("Alarm Status: " + alarmStatus)
 
 # Function to handle keypad presses
 def keyPress(key):
@@ -168,8 +194,8 @@ def keyPress(key):
     lcd.backlight("On")
 
     # Make the buzzer sound
-    buzzerButtonSound = threading.Thread(target=buzzerButton)
-    buzzerButtonSound.start()
+    buttonPushedBuzzerSound = threading.Thread(target=buttonPushedBuzzer)
+    buttonPushedBuzzerSound.start()
 
     # Grab the global keypressCounter variable to display code entry correctly
     global keypressCounter
@@ -193,14 +219,12 @@ def keyPress(key):
             time.sleep(2)
         else:
             # Check if the entered code is correct
-            result = requests.get("http://192.168.1.125/webinterface/confirm_user_entry.php?pin_code=" + userEntry).content
-
+            result = requests.get("http://localhost/webinterface/confirm_user_entry.php?pin_code=" + userEntry).content
             print("Result: " + result)
-
-            if (result == "Access Denied"):
+            if(result == "Access Granted"):
+                accessGranted(userEntry)
+            elif(result == "Access Denied"):
                 accessDenied()
-            elif (result == "Access Granted"):
-                accessGranted()
 
         # Clear the code that was entered
         lcd.updateLCDScreen("Passcode:[      ]", 1)
@@ -259,7 +283,7 @@ def controlPanel():
     global backlightTimer
 
     while True:
-        alarmStatus = "ARMED"
+        alarmStatus = getAlarmStatus()
 
         if (alarmStatus != previousAlarmStatus):
             previousAlarmStatus = alarmStatus
@@ -306,7 +330,16 @@ def rfidReader():
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                result = "Access Denied"
+                result = requests.get("http://localhost/webinterface/confirm_user_entry.php?rfid_card_number=" + uidInString).content
+
+                print("RFID result: " + result)
+
+                if(result == "Access Granted"):
+                    print("RFID Access Granted")
+                    accessGranted(uidInString)
+                elif(result == "Access Denied"):
+                    print("RFID Access Denied")
+                    accessDenied()
 
                 # We must stop crypto
                 util.deauth()
