@@ -9,7 +9,7 @@ import threading
 import mysql.connector as mariadb
 
 # Global Variables
-alarmSoundLocation = "/home/pi/RPHSP/alarm.mp3"
+alarmSoundLocation = "/home/pi/RPHSP/Basestation_Files/alarm.mp3"
 
 # Set Broadcom mode so we can address GPIO pins by number.
 GPIO.setmode(GPIO.BCM)
