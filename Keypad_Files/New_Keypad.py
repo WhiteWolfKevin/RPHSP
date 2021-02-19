@@ -36,7 +36,7 @@ KEYPAD = [
 
 # Define pins used for Keypad, create variable for keypress counting, and create empty variable for keycode entry
 ROW_PINS = [15, 22, 27, 13]
-COL_PINS = [18, 14, 17]
+COL_PINS = [18, 14, 4]
 keypressCounter = 0
 userEntry = ""
 

@@ -2,6 +2,31 @@
 This is a project I've been working on to use Raspberry Pis as a whole home security system.
 
 ### Keypad Pi
+**Keypad Pinout**
+```
+          SD CARD
+          [01][02]  LCD VCC
+LCD SDA   [03][04]
+LCD SCL   [05][06]  LCD GND
+Keypad 4  [07][08]  Keypad 1
+          [09][10]  Keypad 2
+Keypad 5  [11][12]  Keypad 3
+Keypad 6  [13][14]  
+Keypad 7  [15][16]
+RFID 3.3V [17][18]  RFID IRQ
+RFID MOSI [19][20]  
+RFID MISO [21][22]  RFID RST
+RFID SCK  [23][24]  RFID SDA
+RFID GND  [25][26]
+          [27][28]
+          [29][30]  Grn LED-
+Red LED+  [31][32]  Grn LED+
+          [33][34]  Red LED-
+          [35][36]
+          [37][38]
+Buzzer -  [39][40]  Buzzer +
+```
+
 **Required Packages**
 ```
 pip install pi-rc522
@@ -10,12 +35,11 @@ pip install pad4pi
 
 **12-Digit Keypad Configuration**
 ```
-GPIO Pin Numbers
-14,15,18,17,27,22,13
+GPIO Pin Numbers (Left to right looking at front of keypad)
+14,15,18,4,27,22,13
 
-Left to right look at keypad 14,15,18,13,17,27,22
 [Col 2] [row 1] [col 1] [row 4] [col 3] [row 3] [row 2]
-COL [18, 14, 17]
+COL [18, 14, 4]
 ROW [15, 22, 27, 13]
 ```
 ```
