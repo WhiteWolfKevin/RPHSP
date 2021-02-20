@@ -123,7 +123,7 @@ def accessDeniedLCDDisplay():
 # Database Functions
 # ==================
 def getAlarmStatus():
-    return requests.get("http://localhost/webinterface/alarm_status.php").content
+    return requests.get("http://pibasestation/webinterface/alarm_status.php").content
 
 # ==================
 # Access Configurations
@@ -163,9 +163,9 @@ def accessGranted(user_entry):
 
         # Arm the security system
         if (len(user_entry) == 6):
-            requests.get("http://localhost/webinterface/keypad_auth.php?pin_code=" + user_entry).content
+            requests.get("http://pibasestation/webinterface/keypad_auth.php?pin_code=" + user_entry).content
         elif (len(user_entry) == 10):
-            requests.get("http://localhost/webinterface/keypad_auth.php?rfid_card_number=" + user_entry).content
+            requests.get("http://pibasestation/webinterface/keypad_auth.php?rfid_card_number=" + user_entry).content
         else:
             print("Error trying to arm")
 
@@ -177,9 +177,9 @@ def accessGranted(user_entry):
         print("This is where I need to DISARM the system")
         # Disarm the security system
         if (len(user_entry) == 6):
-            requests.get("http://localhost/webinterface/keypad_auth.php?pin_code=" + user_entry).content
+            requests.get("http://pibasestation/webinterface/keypad_auth.php?pin_code=" + user_entry).content
         elif (len(user_entry) == 10):
-            requests.get("http://localhost/webinterface/keypad_auth.php?rfid_card_number=" + user_entry).content
+            requests.get("http://pibasestation/webinterface/keypad_auth.php?rfid_card_number=" + user_entry).content
         else:
             print("Error trying to arm")
     else:
@@ -219,7 +219,7 @@ def keyPress(key):
             time.sleep(2)
         else:
             # Check if the entered code is correct
-            result = requests.get("http://localhost/webinterface/confirm_user_entry.php?pin_code=" + userEntry).content
+            result = requests.get("http://pibasestation/webinterface/confirm_user_entry.php?pin_code=" + userEntry).content
             print("Result: " + result)
             if(result == "Access Granted"):
                 accessGranted(userEntry)
@@ -330,7 +330,7 @@ def rfidReader():
                 print("UID in Hex: " + str(uidInHex))
                 print("UID in Str: " + uidInString)
 
-                result = requests.get("http://localhost/webinterface/confirm_user_entry.php?rfid_card_number=" + uidInString).content
+                result = requests.get("http://pibasestation/webinterface/confirm_user_entry.php?rfid_card_number=" + uidInString).content
 
                 print("RFID result: " + result)
 
