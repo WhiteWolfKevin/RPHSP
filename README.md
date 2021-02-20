@@ -25,6 +25,28 @@ Red LED+  [31][32]  Grn LED+
           [35][36]
           [37][38]
 Buzzer -  [39][40]  Buzzer +
+=============================
+          SD CARD
+          [3V3PWR][ 5VPWR]  LCD VCC
+LCD SDA   [GPIO02][ 5VPWR]
+LCD SCL   [GPIO03][  GRND]  LCD GND
+Keypad 4  [GPIO04][GPIO14]  Keypad 1
+          [  GRND][GPIO15]  Keypad 2
+Keypad 5  [GPIO17][GPIO18]  Keypad 3
+Keypad 6  [GPIO27][  GRND]  
+Keypad 7  [GPIO22][GPIO23]
+RFID 3.3V [3V3PWR][GPIO24]  RFID IRQ
+RFID MOSI [GPIO10][  GRND]  
+RFID MISO [GPIO09][GPIO25]  RFID RST
+RFID SCK  [GPIO11][GPIO08]  RFID SDA
+RFID GND  [  GRND][GPIO07]
+          [ ID_SD][ ID_SC]
+          [GPIO05][  GRND]  Grn LED-
+Red LED+  [GPIO06][GPIO12]  Grn LED+
+          [GPIO13][  GRND]  Red LED-
+          [GPIO19][GPIO16]
+          [GPIO26][GPIO20]
+Buzzer -  [  GRND][GPIO21]  Buzzer +
 ```
 
 **Required Packages**
@@ -46,10 +68,10 @@ Pin 7 - Row 2 {4,5,6}
 ```
 ```
 GPIO Pin Numbers (Left to right looking at front of keypad)
-14,15,18,4,27,22,13
+14,15,18,4,17,27,22
 [Col 2] [Row 1] [Col 1] [Row 4] [Col 3] [Row 3] [Row 2]
-ROW [15, 13, 22, 4]
-COL [18, 14, 27]
+ROW [15, 22, 27, 4]
+COL [18, 14, 17]
 ```
 ```
 * To adjust the key delay, go to this file and edit the "DEFAULT_KEY_DELAY" value
