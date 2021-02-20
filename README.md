@@ -2,7 +2,7 @@
 This is a project I've been working on to use Raspberry Pis as a whole home security system.
 
 ### Keypad Pi
-**Keypad Pinout**
+**Raspberry Pi Pinout**
 ```
           SD CARD
           [01][02]  LCD VCC
@@ -35,12 +35,21 @@ pip install pad4pi
 
 **12-Digit Keypad Configuration**
 ```
+Keypad Pinout
+Pin 1 - Column 2 {2,5,8,0}
+Pin 2 - Row 1 {1,2,3}
+Pin 3 - Column 1 {1,4,7,*}
+Pin 4 - Row 4 {*,0,#}
+Pin 5 - Column 3 {3,6,9,#}
+Pin 6 - Row 3 {7,8,9}
+Pin 7 - Row 2 {4,5,6}
+```
+```
 GPIO Pin Numbers (Left to right looking at front of keypad)
 14,15,18,4,27,22,13
-
-[Col 2] [row 1] [col 1] [row 4] [col 3] [row 3] [row 2]
-COL [18, 14, 4]
-ROW [15, 22, 27, 13]
+[Col 2] [Row 1] [Col 1] [Row 4] [Col 3] [Row 3] [Row 2]
+ROW [15, 13, 22, 4]
+COL [18, 14, 27]
 ```
 ```
 * To adjust the key delay, go to this file and edit the "DEFAULT_KEY_DELAY" value
