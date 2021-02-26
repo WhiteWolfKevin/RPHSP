@@ -4,7 +4,7 @@
      $pin_code = $_GET["pin_code"];
      $rfid_card_number = $_GET["rfid_card_number"];
 
-     $log_file = fopen('log.txt', 'w') or die("Unable to open file!");
+     $log_file = fopen('log.txt', 'a') or die("Unable to open file!");
      // Write to the log file
      fwrite($log_file, date('Y-m-d H:i:s') . " : Pin $pin_code entered\n");
      fwrite($log_file, date('Y-m-d H:i:s') . " : RFID $rfid_card_number entered\n");

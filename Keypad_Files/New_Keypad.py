@@ -256,21 +256,26 @@ def keyPress(key):
 
 def backlightCountdown():
     global backlightTimer
+    global keypressCounter
+    global userEntry
+
     while True:
         while (backlightTimer > 0):
             backlightTimer = backlightTimer - 1
+            print("Backlight Timer: " + str(backlightTimer))
             time.sleep(1)
 
         if (backlightTimer == 0):
-            lcd.backlight("Off")
-            backlightTimer = -1
-
             # Clear the code that was entered
             lcd.updateLCDScreen("Passcode:[      ]", 1)
             keypressCounter = 0
 
             # Clear User Code
             userEntry = ""
+
+            # Turn off the LCD backlight
+            lcd.backlight("Off")
+            backlightTimer = -1
 
         if (backlightTimer == -1):
             time.sleep(1)
