@@ -23,6 +23,7 @@ class magneticSensor:
 # MariaDB server configuration
 mariadb_connection = mariadb.connect(host='piserver', user='rphsp', password='password', database='rphsp')
 database = mariadb_connection.cursor()
+database.autocommit = True
 
 database.execute("select gpio_pin, status from sensors")
 
@@ -38,8 +39,6 @@ pygame.mixer.music.set_volume(1.0)
 # Security System Thread
 def securitySystem():
 
-    rounds = 0
-
     while True:
 
         # Grab Alarm Status from MariaDB server
@@ -47,10 +46,6 @@ def securitySystem():
         result = database.fetchone()
         alarmStatus = result[0]
         print("alarmStatus = " + alarmStatus)
-
-        # Troubleshooting
-        print("Rounds=" + rounds)
-        rounds+=1
 
         # Variables
         securityBreach = False
@@ -62,16 +57,17 @@ def securitySystem():
                 securityBreach = True
                 if (sensor.previousStatus != "OPEN"):
                     database.execute("update sensors set status = 'OPEN' where gpio_pin = " + str(sensor.gpioPin))
-                    mariadb_connection.commit()
                     sensor.previousStatus = "OPEN"
                 print(str(sensor.gpioPin) + " Status: OPEN - WARNING!!!")
             else:
                 # Door/Window is closed
                 if (sensor.previousStatus != "CLOSED"):
                     database.execute("update sensors set status = 'CLOSED' where gpio_pin = " + str(sensor.gpioPin))
-                    mariadb_connection.commit()
                     sensor.previousStatus = "CLOSED"
                 print(str(sensor.gpioPin) + " Status: CLOSED")
+
+        # Commit the database query/update
+        mariadb_connection.commit()
 
         if (securityBreach and alarmStatus == "ARMED"):
             if (not pygame.mixer.music.get_busy()):

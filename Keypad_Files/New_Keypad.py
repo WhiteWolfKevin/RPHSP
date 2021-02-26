@@ -265,6 +265,13 @@ def backlightCountdown():
             lcd.backlight("Off")
             backlightTimer = -1
 
+            # Clear the code that was entered
+            lcd.updateLCDScreen("Passcode:[      ]", 1)
+            keypressCounter = 0
+
+            # Clear User Code
+            userEntry = ""
+
         if (backlightTimer == -1):
             time.sleep(1)
 
