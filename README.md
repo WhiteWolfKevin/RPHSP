@@ -1,6 +1,10 @@
 # Raspberry Pi Home Security Project
 This is a project I've been working on to use Raspberry Pis as a whole home security system.
 
+### BUGS
+**Known Bugs**
+Currently, the python module spidev-3.5 does NOT work with pi-rc522. You must use spidev-3.4 in order for the RFID reader to work.
+
 ### Keypad Pi
 **Raspberry Pi Pinout**
 ```
@@ -51,8 +55,29 @@ Buzzer -  [  GRND][GPIO21]  Buzzer +
 
 **Required Packages**
 ```
-pip install pi-rc522
-pip install pad4pi
+sudo apt update
+sudo apt upgrade -y
+sudo apt dist-upgrade -y
+sudo apt install git -y
+git clone https://github.com/kevbo423/RPHSP ~/RPHSP
+sudo apt install i2c-tools -y
+sudo apt install python-smbus -y
+sudo apt install python-pip -y
+sudo pip install spidev
+sudo pip install pi-rc522
+sudo pip install pad4pi
+sudo pip install requests
+sudo raspi-config
+-Enable I2C
+-Enable SPI
+
+Detect LCD ID and edit i2c_driver.py
+```
+
+**Identify LCD i2c address**
+```
+i2cdetect -y 1
+Modify i2c_driver.py with this address
 ```
 
 **12-Digit Keypad Configuration**

@@ -38,6 +38,8 @@ pygame.mixer.music.set_volume(1.0)
 # Security System Thread
 def securitySystem():
 
+    rounds = 0
+
     while True:
 
         # Grab Alarm Status from MariaDB server
@@ -45,6 +47,10 @@ def securitySystem():
         result = database.fetchone()
         alarmStatus = result[0]
         print("alarmStatus = " + alarmStatus)
+
+        # Troubleshooting
+        print("Rounds=" + rounds)
+        rounds+=1
 
         # Variables
         securityBreach = False
@@ -67,7 +73,7 @@ def securitySystem():
                     sensor.previousStatus = "CLOSED"
                 print(str(sensor.gpioPin) + " Status: CLOSED")
 
-        if (securityBreach and alarmStatus == "Armed"):
+        if (securityBreach and alarmStatus == "ARMED"):
             if (not pygame.mixer.music.get_busy()):
                 pygame.mixer.music.load(alarmSoundLocation)
                 pygame.mixer.music.play(-1)
