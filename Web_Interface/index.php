@@ -42,6 +42,12 @@
 
      <h1>Raspberry Pi Home Security System</h1>
 
+     <form action="configure.php">
+          <button type"submit">Configure RPHSP</button>
+     </form>
+
+     <br>
+
      <?php
 
      // Include database connection
