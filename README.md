@@ -1,12 +1,12 @@
 # Raspberry Pi Home Security Project
 This is a project I've been working on to use Raspberry Pis as a whole home security system.
 
-### BUGS
+# BUGS
 **Known Bugs**
 Currently, the python module spidev-3.5 does NOT work with pi-rc522. You must use spidev-3.4 in order for the RFID reader to work.
 
-### Keypad Pi
-**Raspberry Pi Pinout**
+# Keypad Pi
+## Raspberry Pi Pinout
 ```
           SD CARD
           [01][02]  LCD VCC
@@ -29,7 +29,8 @@ Red LED+  [31][32]  Grn LED+
           [35][36]
           [37][38]
 Buzzer -  [39][40]  Buzzer +
-=============================
+```
+```
           SD CARD
           [3V3PWR][ 5VPWR]  LCD VCC
 LCD SDA   [GPIO02][ 5VPWR]
@@ -53,34 +54,32 @@ Red LED+  [GPIO06][GPIO12]  Grn LED+
 Buzzer -  [  GRND][GPIO21]  Buzzer +
 ```
 
-**Required Packages**
+# RFID Pinout
+*Viewed from the back of the reader from left to right*
 ```
-sudo apt update
-sudo apt upgrade -y
-sudo apt dist-upgrade -y
-sudo apt install git -y
-git clone https://github.com/kevbo423/RPHSP ~/RPHSP
-sudo apt install i2c-tools -y
-sudo apt install python-smbus -y
-sudo apt install python-pip -y
-sudo pip install spidev
-sudo pip install pi-rc522
-sudo pip install pad4pi
-sudo pip install requests
-sudo raspi-config
--Enable I2C
--Enable SPI
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[                          ]
+[ (1)(2)(3)(4)(5)(6)(7)(8) ]
 
-Detect LCD ID and edit i2c_driver.py
+  1    2    3    4    5     6     7    8
+(VCC)(RST)(GND)(IRQ)(MISO)(MOSI)(SCK)(SDA)
 ```
 
-**Identify LCD i2c address**
+# 12-Digit Keypad Configuration
 ```
-i2cdetect -y 1
-Modify i2c_driver.py with this address
+[ 1 2 3 ]
+[ 4 5 6 ]
+[ 7 8 9 ]
+[ * 0 # ]
 ```
-
-**12-Digit Keypad Configuration**
 ```
 Keypad Pinout
 Pin 1 - Column 2 {2,5,8,0}
@@ -105,6 +104,37 @@ COL [18, 14, 17]
 /home/pi/.local/lib/python2.7/site-packages/pad4pi/rpi_gpio.py
 ```
 
+
+# Required Packages
+```
+sudo apt update
+sudo apt upgrade -y
+sudo apt dist-upgrade -y
+sudo apt install git -y
+git clone https://github.com/kevbo423/RPHSP ~/RPHSP
+sudo apt install i2c-tools -y
+sudo apt install python-smbus -y
+sudo apt install python-pip -y
+sudo pip install spidev
+sudo pip install pi-rc522
+sudo pip install pad4pi
+sudo pip install requests
+sudo raspi-config
+-Enable I2C
+-Enable SPI
+
+Detect LCD ID and edit i2c_driver.py
+```
+
+# LCD Display
+**Identify LCD i2c address**
+```
+i2cdetect -y 1
+Modify i2c_driver.py with this address
+```
+
+
+
 **Keypad I2C LCD Screen**\
 Helpful Guide
 https://howchoo.com/g/zwq2zwixotu/how-to-make-a-raspberry-pi-smart-alarm-clock
@@ -116,18 +146,19 @@ sudo apt-get install python-smbus
 i2cdetect -y 1
 ```
 
+# MFRC522 RFID Reader
 **RFID MFRC522 Info**\
 Helpful Guide
 https://github.com/ondryaso/pi-rc522
 
-### Web Server Configuration
+# Web Server Configuration
 ```
 sudo apt install apache2
 sudo apt install php-mysql
 ```
 
 
-### Database Configuration
+# Database Configuration
 **Raspberry Pi Configuration**\
 Make the database accessible from the network.
 ```
@@ -228,7 +259,7 @@ INSERT INTO relay_pins VALUES (1, 27, "Off");
 INSERT INTO relay_pins VALUES (1, 22, "Off");
 ```
 
-### REst API Stuff
+# REst API Stuff
 All responses will have the form
 ```json
 {
@@ -239,7 +270,7 @@ All responses will have the form
 
 Subsequent response definitions will only detail the expected value of the 'data field'
 
-### List all users
+# List all users
 **Definition**
 'GET /users'
 
@@ -271,7 +302,7 @@ Subsequent response definitions will only detail the expected value of the 'data
 ]
 ```
 
-### Register a new user
+# Register a new user
 **Definition**
 'POST /users'
 
@@ -298,7 +329,7 @@ Subsequent response definitions will only detail the expected value of the 'data
 }
 ```
 
-## Lookup user details
+# Lookup user details
 **Definition**
 'GET /users/<user_id>'
 
@@ -320,7 +351,7 @@ Subsequent response definitions will only detail the expected value of the 'data
 }
 ```
 
-## Delete a user
+# Delete a user
 **Definition**
 'DELETE /users/<user_id>'
 
