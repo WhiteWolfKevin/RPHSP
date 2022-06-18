@@ -159,7 +159,7 @@ sudo apt install php-mysql
 
 
 # Database Configuration
-**Raspberry Pi Configuration**\
+*NOTE:* Database being designed at `https://app.dbdesigner.net/`
 Make the database accessible from the network.
 ```
 Network Access: Add "bind_address=192.168.1.250" and "[mysqld] bind_address=192.168.1.250" to /etc/mysql/mariadb.cnf
